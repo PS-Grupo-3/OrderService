@@ -1,0 +1,6 @@
+@Tp_Grupal_HostAddress = http://localhost:5283
+
+GET {{Tp_Grupal_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
