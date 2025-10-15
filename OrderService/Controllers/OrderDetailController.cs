@@ -1,0 +1,16 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace OrderService.Controllers
+{
+    [Route("api/v1/[controller]")]
+    [ApiController]
+    public class OrderDetailController : ControllerBase
+    {
+        [HttpGet("test")]
+        public IActionResult GetTest()
+        {
+            return Ok(new { Message = "Event endpoint is working!" });
+        }
+    }
+}
