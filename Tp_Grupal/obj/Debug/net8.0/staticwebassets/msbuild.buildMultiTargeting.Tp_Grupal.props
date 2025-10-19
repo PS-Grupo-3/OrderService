@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\Tp_Grupal.props" />
-</Project>
