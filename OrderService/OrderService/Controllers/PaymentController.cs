@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace OrderService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class PaymentController : ControllerBase
     {
