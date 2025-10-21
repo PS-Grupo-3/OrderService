@@ -17,6 +17,13 @@ namespace Infrastructure.Persistence.Configurations
                 .HasColumnType("decimal(18, 2)")
                 .IsRequired();
 
+            builder.HasOne(o=> o.PaymentType)
+                .WithMany(p=>p.Orders)
+                .HasForeignKey(o=>o.PaymentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+
             builder.HasOne(o => o.OrderStatus)
                 .WithMany(s => s.Orders)
                 .HasForeignKey(s => s.OrderStatusId)

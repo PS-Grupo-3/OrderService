@@ -12,5 +12,6 @@
 
         public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
         public OrderStatus OrderStatus { get; set; }
+        public PaymentType PaymentType { get; set; }
     }
 }
