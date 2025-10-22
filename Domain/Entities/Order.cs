@@ -7,11 +7,12 @@
         public DateTime BuyDate { get; set; }
         public double TotalAmount { get; set; }
         public int PaymentId { get; set; }
-        public bool Payment { get; set; }
+        public int  PaymentStatusId { get; set; }
         public int OrderStatusId { get; set; }
 
         public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
         public OrderStatus OrderStatus { get; set; }
         public PaymentType PaymentType { get; set; }
+        public PaymentStatus PaymentStatus { get; set; }
     }
 }

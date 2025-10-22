@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -25,6 +27,32 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PaymentStatuses",
+                columns: table => new
+                {
+                    PaymentStatusId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PaymentStatusName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentStatuses", x => x.PaymentStatusId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PaymentTypes",
+                columns: table => new
+                {
+                    PaymentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PaymentName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentTypes", x => x.PaymentId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -33,7 +61,7 @@ namespace Infrastructure.Migrations
                     BuyDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PaymentId = table.Column<int>(type: "int", nullable: false),
-                    Payment = table.Column<bool>(type: "bit", nullable: false),
+                    PaymentStatusId = table.Column<int>(type: "int", nullable: false),
                     OrderStatusId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -44,6 +72,18 @@ namespace Infrastructure.Migrations
                         column: x => x.OrderStatusId,
                         principalTable: "OrderStatuses",
                         principalColumn: "OrderStatusId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_PaymentStatuses_PaymentStatusId",
+                        column: x => x.PaymentStatusId,
+                        principalTable: "PaymentStatuses",
+                        principalColumn: "PaymentStatusId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_PaymentTypes_PaymentId",
+                        column: x => x.PaymentId,
+                        principalTable: "PaymentTypes",
+                        principalColumn: "PaymentId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -69,6 +109,26 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.InsertData(
+                table: "PaymentStatuses",
+                columns: new[] { "PaymentStatusId", "PaymentStatusName" },
+                values: new object[,]
+                {
+                    { 1, "Pending" },
+                    { 2, "Paid" },
+                    { 3, "Canceled" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PaymentTypes",
+                columns: new[] { "PaymentId", "PaymentName" },
+                values: new object[,]
+                {
+                    { 1, "Efectivo" },
+                    { 2, "Mercado Pago" },
+                    { 3, "Metodo bancario" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_OrderDetails_OrderId",
                 table: "OrderDetails",
@@ -90,6 +150,11 @@ namespace Infrastructure.Migrations
                 column: "PaymentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Orders_PaymentStatusId",
+                table: "Orders",
+                column: "PaymentStatusId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_UserId",
                 table: "Orders",
                 column: "UserId");
@@ -106,6 +171,12 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderStatuses");
+
+            migrationBuilder.DropTable(
+                name: "PaymentStatuses");
+
+            migrationBuilder.DropTable(
+                name: "PaymentTypes");
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.HasIndex(o => o.UserId);
             builder.HasIndex(o => o.PaymentId);
-
+            builder.HasIndex(o => o.PaymentStatusId);
             builder.Property(o => o.TotalAmount)
                 .HasColumnType("decimal(18, 2)")
                 .IsRequired();
@@ -28,6 +28,12 @@ namespace Infrastructure.Persistence.Configurations
                 .WithMany(s => s.Orders)
                 .HasForeignKey(s => s.OrderStatusId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(o=>o.PaymentStatus)
+                .WithMany(ps=>ps.Orders)
+                .HasForeignKey(ps=>ps.PaymentStatusId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

@@ -15,11 +15,6 @@ namespace OrderService.Controllers
             mediator = _mediator;
         }
 
-
-
-
-
-
         [HttpGet("test")]
         public async Task<IActionResult> GetAllPayments()
         {

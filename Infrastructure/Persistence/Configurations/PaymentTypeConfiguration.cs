@@ -11,6 +11,8 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasKey(p => p.PaymentId);
             builder.Property(p => p.PaymentName).IsRequired().HasMaxLength(100);
 
+
+
             builder.HasData
                 (
                 new PaymentType { PaymentId = 1, PaymentName = "Efectivo" },

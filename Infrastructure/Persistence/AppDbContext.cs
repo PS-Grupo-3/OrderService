@@ -13,6 +13,7 @@ namespace Infrastructure.Persistence
         public DbSet<OrderStatus> OrderStatuses { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<PaymentType> PaymentTypes{ get; set; }
+        public DbSet<PaymentStatus> PaymentStatuses { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
