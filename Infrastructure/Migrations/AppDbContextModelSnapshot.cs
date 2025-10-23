@@ -105,6 +105,23 @@ namespace Infrastructure.Migrations
                     b.HasKey("OrderStatusId");
 
                     b.ToTable("OrderStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            OrderStatusId = 1,
+                            StatusName = "Pending"
+                        },
+                        new
+                        {
+                            OrderStatusId = 2,
+                            StatusName = "Paid"
+                        },
+                        new
+                        {
+                            OrderStatusId = 3,
+                            StatusName = "Canceled"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.PaymentStatus", b =>

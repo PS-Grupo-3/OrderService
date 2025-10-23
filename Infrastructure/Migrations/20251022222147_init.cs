@@ -110,6 +110,16 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "OrderStatuses",
+                columns: new[] { "OrderStatusId", "StatusName" },
+                values: new object[,]
+                {
+                    { 1, "Pending" },
+                    { 2, "Paid" },
+                    { 3, "Canceled" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "PaymentStatuses",
                 columns: new[] { "PaymentStatusId", "PaymentStatusName" },
                 values: new object[,]

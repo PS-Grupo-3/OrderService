@@ -1,14 +1,8 @@
-﻿
-
-namespace Application.Models.Responses
+﻿namespace Application.Models.Responses
 {
-    public class PaymentTypeResponse
+    public class PaymentResponse
     {
         public int Id { get; set; }
         public string PaymentName { get; set; }
-
-
-
-
     }
 }

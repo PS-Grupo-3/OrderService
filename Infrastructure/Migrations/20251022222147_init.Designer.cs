@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251022200336_init")]
+    [Migration("20251022222147_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -108,6 +108,23 @@ namespace Infrastructure.Migrations
                     b.HasKey("OrderStatusId");
 
                     b.ToTable("OrderStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            OrderStatusId = 1,
+                            StatusName = "Pending"
+                        },
+                        new
+                        {
+                            OrderStatusId = 2,
+                            StatusName = "Paid"
+                        },
+                        new
+                        {
+                            OrderStatusId = 3,
+                            StatusName = "Canceled"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.PaymentStatus", b =>

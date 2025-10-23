@@ -1,13 +1,11 @@
 using Infrastructure.Persistence;
-using Application.Interfaces.Payment;
-using Infrastructure.Queries.Payment;
-using Infrastructure.Commands.Payment;
-using Application.Interfaces.Order;
-using Infrastructure.Commands.Order;
-using Infrastructure.Queries.Order;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using System.Reflection;
+using Application.Interfaces.Command;
+using Infrastructure.Commands;
+using Infrastructure.Queries;
+using Application.Interfaces.Query;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,12 +20,18 @@ builder.Services.AddDbContext<AppDbContext>(options => {
 });
 
 //Custom
-
-builder.Services.AddScoped<IPaymentQuery, PaymentQuery>();
-builder.Services.AddScoped<IPaymentCommand, PaymentCommand>();
-
 builder.Services.AddScoped<IOrderQuery, OrderQuery>();
 builder.Services.AddScoped<IOrderCommand, OrderCommand>();
+
+builder.Services.AddScoped<IOrderStatusCommand, OrderStatusCommand>();
+builder.Services.AddScoped<IOrderStatusQuery, OrderStatusQuery>();
+
+builder.Services.AddScoped<IPaymentStatusQuery, PaymentStatusQuery>();
+
+builder.Services.AddScoped<IPaymentTypeQuery, PaymentTypeQuery>();
+builder.Services.AddScoped<IPaymentTypeCommand, PaymentTypeCommand>();
+
+
 
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("Application")));
