@@ -19,6 +19,10 @@ namespace Application.Features.Order.Queries
             {
                 throw new ArgumentException("Rango de fechas inválidas");
             }
+            if (request.status <=0 || request.status > 3) 
+            {
+                throw new ArgumentException("Estado inválido");
+            }
 
             var orders = await _query.GetAllAsync(request.from, request.to, request.status);
 

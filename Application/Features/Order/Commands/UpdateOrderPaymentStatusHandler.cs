@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Command;
+﻿using Application.Exceptions;
+using Application.Interfaces.Command;
 using Application.Interfaces.Query;
 using Application.Models.Responses;
 using MediatR;
@@ -24,8 +25,19 @@ namespace Application.Features.Order.Commands
 
             if (order == null)
             {
-                //Validación
+                throw new NotFoundException404($"No se encontraron ordenes con el id {request.request.OrderId}");
             }
+
+            if (request.request.PaymentStatusId <= 0 || request.request.PaymentStatusId > 3)
+            {
+                throw new ArgumentException("Estado inválido");
+            }
+
+            if (request.request.PaymentStatusId < order.PaymentStatusId) 
+            {
+                throw new BadRequestException400($"No se puede actualizar a un estado previo");
+            }
+            
             
              await command.UpdateOrderPaymentStatus(order, request.request.PaymentStatusId,cancellationToken);
             //Lo actualizo.
@@ -39,27 +51,7 @@ namespace Application.Features.Order.Commands
                 CreateAt = order.BuyDate,
                 TotalAmount = order.TotalAmount
             };
-            /*return new OrderResponse
-                {
-                    OrderId = newOrder.OrderId,
-                    UserId = newOrder.UserId,
-                    TotalAmount = newOrder.TotalAmount,
-                    Payment = new PaymentResponse
-                    {
-                        Id = newOrder.PaymentId,
-                        PaymentName = newOrder.PaymentType.PaymentName,
-                    },
-                    PaymentStatus = new PaymentStatusResponse
-                    {
-                        statusId=newOrder.PaymentStatusId,
-                        StatusName=newOrder.PaymentStatus.PaymentStatusName,
-                    },
-                    OrderStatus=new OrderStatusResponse 
-                    {
-                    Id=status.OrderStatusId,
-                    StatusName = status.StatusName,
-                    }
-                };*/
+         
         }
     }
 }

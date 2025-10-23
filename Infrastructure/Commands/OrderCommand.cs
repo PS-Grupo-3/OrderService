@@ -38,7 +38,6 @@ namespace Infrastructure.Commands
             {
                 case 1:
                     Entity.OrderStatusId = 1;
-                   
                     break;
                 case 2:
                     Entity.OrderStatusId = 2;

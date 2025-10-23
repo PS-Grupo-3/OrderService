@@ -74,32 +74,7 @@ namespace Application.Features.Order.Commands
                 CreateAt = order.BuyDate,
                 TotalAmount = order.TotalAmount
             };
-            /*var paymentStatus = await _PaymentStatus.GetByIdAsync(order.PaymentStatusId);
-            var orderStatus = await _OrderStatusQuery.GetByIdAsync(order.OrderStatusId);
-
-
-            return new OrderResponse 
-            {
-            OrderId=order.OrderId,
-            UserId=order.UserId,
-            TotalAmount=order.TotalAmount,
-            Payment= new PaymentResponse 
-            {
-            Id=order.PaymentId,
-            PaymentName=PaymentType.PaymentName
-            },
-            PaymentStatus= new PaymentStatusResponse
-            {
-                statusId = order.PaymentStatusId,
-                StatusName = paymentStatus.PaymentStatusName
-            },
-            OrderStatus = new OrderStatusResponse 
-            {
-            Id= orderStatus.OrderStatusId,
-            StatusName= orderStatus.StatusName,
-            }
-            
-            };*/
+           
         }
     }
 }
