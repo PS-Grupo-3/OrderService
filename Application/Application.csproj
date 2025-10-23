@@ -13,10 +13,7 @@
   <ItemGroup>
     <Folder Include="Exceptions\" />
     <Folder Include="Features\OrderStatus\Commands\" />
-    <Folder Include="Features\Order\Commands\" />
-    <Folder Include="Features\Order\Queries\" />
     <Folder Include="Features\PaymentType\Command\" />
-    <Folder Include="Models\Requests\" />
   </ItemGroup>
 
   <ItemGroup>
