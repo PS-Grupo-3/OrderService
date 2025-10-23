@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace Application.Features.Order.Commands
 {
-    public class CreateOrderHandler:IRequestHandler<CreateOrder,OrderResponse>
+    public class CreateOrderHandler:IRequestHandler<CreateOrderCommand,OrderResponse>
     {
         private readonly IOrderCommand _Command;
         private readonly IPaymentTypeQuery _PaymentType;
@@ -21,26 +21,62 @@ namespace Application.Features.Order.Commands
             _OrderStatusQuery = orderStatusQuery;
         }
 
-        public async Task<OrderResponse> Handle(CreateOrder request, CancellationToken cancellationToken)
+        public async Task<OrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
             var PaymentType = await _PaymentType.GetByIdAsync(request.request.PaymentId);
             if (PaymentType == null) {
-                //Validación
+                throw new KeyNotFoundException($"No existe un método de pago con ID {request.request.PaymentId}");
             }
+
+            double totalAmount = 0;
+            var orderDetails = new List<OrderDetail>();
             
+            foreach (var detail in request.request.Details)
+            {
+                if (detail.UnitPrice < 0)
+                {
+                    throw new ArgumentException($"El precio {detail.UnitPrice} no es válido.");
+                }
+                
+                if (detail.Quantity < 0)
+                {
+                    throw new ArgumentException($"La cantidad {detail.Quantity} no es válido.");
+                }
+
+                double subTotal = detail.UnitPrice * detail.Quantity;
+                totalAmount += subTotal;
+
+                orderDetails.Add(new OrderDetail
+                {
+                    TicketId = detail.TicketId,
+                    UnitPrice = detail.UnitPrice,
+                    Quantity = detail.Quantity,
+                    Subtotal = subTotal
+                });
+            }
+
             var order = new Domain.Entities.Order
             {
-                OrderId = new Guid(),
                 UserId = request.request.UserId,
                 BuyDate = DateTime.UtcNow,
-                TotalAmount = 2400,//Este precio lo pongo para pruebas
-                PaymentId= request.request.PaymentId,
-                PaymentStatusId= 1, //Lo pongo así porque inicialmente va a estar pendiente.
-                OrderStatusId=1, //Lo mismo con el estado de la orden. Va a estar pendiente hasta que se realice el pago.
+                TotalAmount = totalAmount,
+                PaymentId = request.request.PaymentId,
+                PaymentStatusId = 1,
+                OrderStatusId = 1,
+                OrderDetails = orderDetails
             };
-            var paymentStatus = await _PaymentStatus.GetByIdAsync(order.PaymentStatusId);
-            var orderStatus = await _OrderStatusQuery.GetByIdAsync(order.OrderStatusId);
+
             await _Command.InsertAsync(order);
+
+            return new OrderResponse
+            {
+                OrderId = order.OrderId,
+                CreateAt = order.BuyDate,
+                TotalAmount = order.TotalAmount
+            };
+            /*var paymentStatus = await _PaymentStatus.GetByIdAsync(order.PaymentStatusId);
+            var orderStatus = await _OrderStatusQuery.GetByIdAsync(order.OrderStatusId);
+
 
             return new OrderResponse 
             {
@@ -63,8 +99,7 @@ namespace Application.Features.Order.Commands
             StatusName= orderStatus.StatusName,
             }
             
-            };
-            
+            };*/
         }
     }
 }

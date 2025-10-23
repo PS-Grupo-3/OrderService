@@ -11,25 +11,25 @@ namespace OrderService.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly IMediator mediator;
-        public OrderController(IMediator _mediator) 
+        private readonly IMediator _mediator;
+
+        public OrderController(IMediator mediator) 
         {
-        mediator= _mediator;
+            _mediator = mediator;
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
         {
-            var result = await mediator.Send(new CreateOrder(request));
-            return Ok(result);
-        
+            var result = await _mediator.Send(new CreateOrderCommand(request));
+            return CreatedAtAction(nameof(GetById), new { id = result.OrderId }, result);
         }
 
         [HttpGet("{Id:Guid}")]
-        public async Task<IActionResult> GetOrderById(Guid Id)
+        public async Task<IActionResult> GetById(Guid Id)
         {
 
-            var result = await mediator.Send(new GetOrderByIdQuery(Id));
+            var result = await _mediator.Send(new GetOrderByIdQuery(Id));
             return Ok(result); 
         
         }
@@ -38,7 +38,7 @@ namespace OrderService.Controllers
         public async Task<IActionResult> UpdateOrderStatus([FromBody] UpdateOrderPaymentStatusRequest request)
         {
             
-            var result = await mediator.Send(new UpdateOrderPaymentStatus(request));
+            var result = await _mediator.Send(new UpdateOrderPaymentStatusCommand(request));
             return Ok(result);
         }
     }

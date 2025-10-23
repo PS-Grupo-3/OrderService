@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.Features.Order.Queries
 {
-    public class GetOrderByIdHandler : IRequestHandler<GetOrderByIdQuery, OrderResponse>
+    public class GetOrderByIdHandler : IRequestHandler<GetOrderByIdQuery, CompleteOrderResponse>
     {
         private readonly IOrderQuery _query;
 
@@ -14,11 +14,42 @@ namespace Application.Features.Order.Queries
             this._query = query;
         }
 
-        public async Task<OrderResponse> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
+        public async Task<CompleteOrderResponse> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
         {
             var order = await  _query.GetOrderByIdAsync(request.orderId);
 
-            return new OrderResponse {
+
+            return new CompleteOrderResponse
+            {
+                OrderId = order.OrderId,
+                UserId = order.UserId,
+                TotalAmount = order.TotalAmount,
+                PaymentType = new PaymentResponse
+                {
+                    Id = order.PaymentType.PaymentId,
+                    PaymentName = order.PaymentType.PaymentName
+                },
+                PaymentStatus = new PaymentResponse
+                {
+                    Id = order.PaymentStatus.PaymentStatusId,
+                    PaymentName = order.PaymentStatus.PaymentStatusName
+                },
+                OrderStatus = new OrderStatusResponse
+                {
+                    Id = order.OrderStatus.OrderStatusId,
+                    StatusName = order.OrderStatus.StatusName
+                },
+                Details = order.OrderDetails.Select(od => new OrderDetailsResponse
+                {
+                    DetailId = od.DetailId,
+                    TicketId = od.TicketId,
+                    UnitPrice = od.UnitPrice,
+                    Quantity = od.Quantity,
+                    SubTotal = od.Subtotal
+                }).ToList(),
+                CreateAt = order.BuyDate,
+            };
+            /*return new OrderResponse {
                 OrderId = order.OrderId,
                 UserId = order.UserId,
                 TotalAmount = order.TotalAmount,
@@ -33,7 +64,7 @@ namespace Application.Features.Order.Queries
                 StatusName=order.PaymentStatus.PaymentStatusName,
                 }
             
-            };
+            };*/
         }
     }
 }

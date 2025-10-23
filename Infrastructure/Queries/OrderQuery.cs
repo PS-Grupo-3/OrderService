@@ -16,7 +16,12 @@ namespace Infrastructure.Queries
 
         public async Task<Order> GetOrderByIdAsync(Guid orderId, CancellationToken cancellationToken = default)
         {
-            return await _context.Orders.Include(o=>o.PaymentStatus).Include(o => o.PaymentType).FirstOrDefaultAsync(order=>order.OrderId==orderId);
+            return await _context.Orders
+                .Include(o => o.PaymentStatus)
+                .Include(o => o.PaymentType)
+                .Include(o => o.OrderStatus)
+                .Include(o => o.OrderDetails)
+                .FirstOrDefaultAsync(order=>order.OrderId==orderId);
         }
     }
 }

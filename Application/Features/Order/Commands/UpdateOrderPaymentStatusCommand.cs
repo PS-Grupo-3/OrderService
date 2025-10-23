@@ -5,5 +5,5 @@ using MediatR;
 
 namespace Application.Features.Order.Commands
 {
-    public record UpdateOrderPaymentStatus(UpdateOrderPaymentStatusRequest request):IRequest<OrderResponse>;
+    public record UpdateOrderPaymentStatusCommand(UpdateOrderPaymentStatusRequest request):IRequest<OrderResponse>;
 }

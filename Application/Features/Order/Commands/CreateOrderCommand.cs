@@ -5,5 +5,5 @@ using MediatR;
 
 namespace Application.Features.Order.Commands
 {
-    public record CreateOrder(CreateOrderRequest request):IRequest<OrderResponse>;
+    public record CreateOrderCommand(CreateOrderRequest request):IRequest<OrderResponse>;
 } 

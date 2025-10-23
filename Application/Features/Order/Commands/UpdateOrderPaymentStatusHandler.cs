@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Features.Order.Commands
 {
-    public class UpdateOrderPaymentStatusHandler: IRequestHandler<UpdateOrderPaymentStatus,OrderResponse>
+    public class UpdateOrderPaymentStatusHandler: IRequestHandler<UpdateOrderPaymentStatusCommand,OrderResponse>
     {
         private readonly IOrderCommand command;
         private readonly IOrderQuery query;
@@ -18,7 +18,7 @@ namespace Application.Features.Order.Commands
 
         }
 
-        public async Task<OrderResponse> Handle(UpdateOrderPaymentStatus request, CancellationToken cancellationToken)
+        public async Task<OrderResponse> Handle(UpdateOrderPaymentStatusCommand request, CancellationToken cancellationToken)
         {
             var order = await query.GetOrderByIdAsync(request.request.OrderId,cancellationToken);
 
@@ -34,6 +34,12 @@ namespace Application.Features.Order.Commands
             var status = await _OrderStatusQuery.GetByIdAsync(order.OrderStatusId);
 
             return new OrderResponse
+            {
+                OrderId = order.OrderId,
+                CreateAt = order.BuyDate,
+                TotalAmount = order.TotalAmount
+            };
+            /*return new OrderResponse
                 {
                     OrderId = newOrder.OrderId,
                     UserId = newOrder.UserId,
@@ -53,7 +59,7 @@ namespace Application.Features.Order.Commands
                     Id=status.OrderStatusId,
                     StatusName = status.StatusName,
                     }
-                };
+                };*/
         }
     }
 }
