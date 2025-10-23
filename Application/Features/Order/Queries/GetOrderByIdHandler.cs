@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Query;
+﻿using Application.Exceptions;
+using Application.Interfaces.Query;
 using Application.Models.Responses;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
@@ -17,7 +18,10 @@ namespace Application.Features.Order.Queries
         public async Task<CompleteOrderResponse> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
         {
             var order = await  _query.GetByIdAsync(request.orderId);
-
+            if (order == null) 
+            {
+            throw new NotFoundException404($"No se encontraron ordenes con el id {request.orderId}");
+            }
 
             return new CompleteOrderResponse
             {
@@ -49,22 +53,7 @@ namespace Application.Features.Order.Queries
                 }).ToList(),
                 CreateAt = order.BuyDate,
             };
-            /*return new OrderResponse {
-                OrderId = order.OrderId,
-                UserId = order.UserId,
-                TotalAmount = order.TotalAmount,
-                Payment = new PaymentResponse
-                {
-                    Id = order.PaymentId,
-                    PaymentName = order.PaymentType.PaymentName,
-                },
-                PaymentStatus=new PaymentStatusResponse 
-                {
-                statusId=order.PaymentStatusId,
-                StatusName=order.PaymentStatus.PaymentStatusName,
-                }
             
-            };*/
         }
     }
 }
