@@ -5,7 +5,8 @@ namespace Application.Interfaces.Query
 {
     public interface IOrderQuery
     {
-        Task<Order> GetOrderByIdAsync(Guid orderId,CancellationToken cancellationToken=default);
+        Task<IEnumerable<Order>> GetAllAsync(DateTime? from, DateTime? to, int? status, CancellationToken cancellationToken = default);
+        Task<Order> GetByIdAsync(Guid orderId,CancellationToken cancellationToken=default);
 
     }
 }

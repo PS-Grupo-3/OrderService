@@ -20,7 +20,7 @@ namespace Application.Features.Order.Commands
 
         public async Task<OrderResponse> Handle(UpdateOrderPaymentStatusCommand request, CancellationToken cancellationToken)
         {
-            var order = await query.GetOrderByIdAsync(request.request.OrderId,cancellationToken);
+            var order = await query.GetByIdAsync(request.request.OrderId,cancellationToken);
 
             if (order == null)
             {
@@ -29,7 +29,7 @@ namespace Application.Features.Order.Commands
             
              await command.UpdateOrderPaymentStatus(order, request.request.PaymentStatusId,cancellationToken);
             //Lo actualizo.
-            var newOrder = await query.GetOrderByIdAsync(order.OrderId, cancellationToken);
+            var newOrder = await query.GetByIdAsync(order.OrderId, cancellationToken);
             //Lo traigo con todas los campos.
             var status = await _OrderStatusQuery.GetByIdAsync(order.OrderStatusId);
 

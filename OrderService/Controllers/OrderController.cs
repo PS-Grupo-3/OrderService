@@ -1,8 +1,9 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using Application.Features.Order.Commands;
 using Application.Features.Order.Queries;
-using Application.Features.Order.Commands;
+using Application.Features.OrderStatus.Queries;
 using Application.Models.Requests;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace OrderService.Controllers
@@ -23,6 +24,13 @@ namespace OrderService.Controllers
         {
             var result = await _mediator.Send(new CreateOrderCommand(request));
             return CreatedAtAction(nameof(GetById), new { id = result.OrderId }, result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll(DateTime? from, DateTime? to, int? status)
+        {
+            var result = await _mediator.Send(new GetAllOrdersQuery(from, to, status));
+            return Ok(result);
         }
 
         [HttpGet("{Id:Guid}")]

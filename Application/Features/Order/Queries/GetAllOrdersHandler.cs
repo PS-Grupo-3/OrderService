@@ -5,21 +5,24 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.Features.Order.Queries
 {
-    public class GetOrderByIdHandler : IRequestHandler<GetOrderByIdQuery, CompleteOrderResponse>
+    public class GetAllOrdersHandler : IRequestHandler<GetAllOrdersQuery, List<CompleteOrderResponse>>
     {
         private readonly IOrderQuery _query;
 
-        public GetOrderByIdHandler(IOrderQuery query)
+        public GetAllOrdersHandler(IOrderQuery query)
         {
             this._query = query;
         }
-
-        public async Task<CompleteOrderResponse> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<CompleteOrderResponse>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
         {
-            var order = await  _query.GetByIdAsync(request.orderId);
+            if (request.from.HasValue && request.to.HasValue && request.from.Value > request.to.Value)
+            {
+                throw new ArgumentException("Rango de fechas inválidas");
+            }
 
+            var orders = await _query.GetAllAsync(request.from, request.to, request.status);
 
-            return new CompleteOrderResponse
+            var response = orders.Select(order => new CompleteOrderResponse
             {
                 OrderId = order.OrderId,
                 UserId = order.UserId,
@@ -48,23 +51,9 @@ namespace Application.Features.Order.Queries
                     SubTotal = od.Subtotal
                 }).ToList(),
                 CreateAt = order.BuyDate,
-            };
-            /*return new OrderResponse {
-                OrderId = order.OrderId,
-                UserId = order.UserId,
-                TotalAmount = order.TotalAmount,
-                Payment = new PaymentResponse
-                {
-                    Id = order.PaymentId,
-                    PaymentName = order.PaymentType.PaymentName,
-                },
-                PaymentStatus=new PaymentStatusResponse 
-                {
-                statusId=order.PaymentStatusId,
-                StatusName=order.PaymentStatus.PaymentStatusName,
-                }
-            
-            };*/
+            }).ToList();
+
+            return response;
         }
     }
 }
