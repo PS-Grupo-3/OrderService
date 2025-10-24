@@ -31,8 +31,6 @@ builder.Services.AddScoped<IPaymentStatusQuery, PaymentStatusQuery>();
 builder.Services.AddScoped<IPaymentTypeQuery, PaymentTypeQuery>();
 builder.Services.AddScoped<IPaymentTypeCommand, PaymentTypeCommand>();
 
-builder.Services.AddScoped<IOrderDetailQuery, OrderDetailQuery>();
-
 
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("Application")));
