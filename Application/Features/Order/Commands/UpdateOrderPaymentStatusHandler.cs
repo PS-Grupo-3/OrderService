@@ -21,29 +21,27 @@ namespace Application.Features.Order.Commands
 
         public async Task<OrderResponse> Handle(UpdateOrderPaymentStatusCommand request, CancellationToken cancellationToken)
         {
-            var order = await query.GetByIdAsync(request.request.OrderId,cancellationToken);
+            var order = await query.GetByIdAsync(request.Id, cancellationToken);
 
             if (order == null)
             {
-                throw new NotFoundException404($"No se encontraron ordenes con el id {request.request.OrderId}");
+                throw new NotFoundException404($"No se encontró la orden con el id {request.Id}");
             }
 
-            if (request.request.PaymentStatusId <= 0 || request.request.PaymentStatusId > 3)
+            if (request.request.Status <= 0 || request.request.Status > 3)
             {
                 throw new ArgumentException("Estado inválido");
             }
 
-            if (request.request.PaymentStatusId < order.PaymentStatusId) 
+            if (request.request.Status < order.PaymentStatusId) 
             {
                 throw new BadRequestException400($"No se puede actualizar a un estado previo");
             }
             
-            
-             await command.UpdateOrderPaymentStatus(order, request.request.PaymentStatusId,cancellationToken);
+            await command.UpdateOrderPaymentStatus(order, request.request.Status, cancellationToken);
+
             //Lo actualizo.
             var newOrder = await query.GetByIdAsync(order.OrderId, cancellationToken);
-            //Lo traigo con todas los campos.
-            var status = await _OrderStatusQuery.GetByIdAsync(order.OrderStatusId);
 
             return new OrderResponse
             {

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Features.PaymentStatus.Queries
 {
-    public class GetAllPaymentStatusesHandler : IRequestHandler<GetAllPaymentStatusesQuery, List<PaymentResponse>>
+    public class GetAllPaymentStatusesHandler : IRequestHandler<GetAllPaymentStatusesQuery, List<GenericResponse>>
     {
         private readonly IPaymentTypeQuery _Query;
 
@@ -13,14 +13,14 @@ namespace Application.Features.PaymentStatus.Queries
             _Query = query;
         }
 
-        public async Task<List<PaymentResponse>> Handle(GetAllPaymentStatusesQuery request, CancellationToken cancellationToken)
+        public async Task<List<GenericResponse>> Handle(GetAllPaymentStatusesQuery request, CancellationToken cancellationToken)
         {
             var payments = await _Query.GetAllAsync(cancellationToken);
 
-            return payments.Select(Payment => new PaymentResponse
+            return payments.Select(Payment => new GenericResponse
             {
                 Id = Payment.PaymentId,
-                PaymentName = Payment.PaymentName
+                Name = Payment.PaymentName
             }).ToList();
         }
     }

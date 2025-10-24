@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Application.Features.OrderStatus.Queries
 {
-    public record GetOrderStatusByIdQuery(int orderStatusId) : IRequest<OrderStatusResponse>;
+    public record GetOrderStatusByIdQuery(int orderStatusId) : IRequest<GenericResponse>;
 }

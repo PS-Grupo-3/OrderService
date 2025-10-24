@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.Features.OrderStatus.Queries
 {
-    public class GetOrderStatusByIdHandler : IRequestHandler<GetOrderStatusByIdQuery, OrderStatusResponse>
+    public class GetOrderStatusByIdHandler : IRequestHandler<GetOrderStatusByIdQuery, GenericResponse>
     {
         private readonly IOrderStatusQuery _Query;
 
@@ -19,7 +19,7 @@ namespace Application.Features.OrderStatus.Queries
             _Query = query;
         }
 
-        public async Task<OrderStatusResponse> Handle(GetOrderStatusByIdQuery request, CancellationToken cancellationToken)
+        public async Task<GenericResponse> Handle(GetOrderStatusByIdQuery request, CancellationToken cancellationToken)
         {
             var status = await _Query.GetByIdAsync(request.orderStatusId, cancellationToken);
 
@@ -28,10 +28,10 @@ namespace Application.Features.OrderStatus.Queries
                 throw new ArgumentNullException($"No se encontró el estado de la órden con el ID {request.orderStatusId}");
             }
 
-            return new OrderStatusResponse
+            return new GenericResponse
             {
                 Id = status.OrderStatusId,
-                StatusName = status.StatusName
+                Name = status.StatusName
             };
         }
     }

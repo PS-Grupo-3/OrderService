@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Application.Features.PaymentStatus.Queries
 {
-    public record GetPaymentStatusByIdQuery(int paymentStatusId) : IRequest<PaymentResponse>;
+    public record GetPaymentStatusByIdQuery(int paymentStatusId) : IRequest<GenericResponse>;
 }

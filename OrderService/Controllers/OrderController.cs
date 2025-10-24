@@ -58,17 +58,36 @@ namespace OrderService.Controllers
             {
                 return NotFound(new ApiError { message = exception.Message });
             }
-
-
         }
 
-        [HttpPatch]
-      
-        public async Task<IActionResult> UpdateOrderStatus([FromBody] UpdateOrderPaymentStatusRequest request)
+        [HttpPut("{Id:Guid}")]
+        public async Task<IActionResult> Update(Guid Id, [FromBody] DetailsUpdateRequest request)
         {
             try
             {
-                var result = await _mediator.Send(new UpdateOrderPaymentStatusCommand(request));
+                var result = await _mediator.Send(new UpdateOrderDetailsCommand(Id, request));
+                return Ok(result);
+            }
+            catch (NotFoundException404 exception)
+            {
+                return NotFound(new ApiError { message = exception.Message });
+            }
+            catch (BadRequestException400 exception)
+            {
+                return BadRequest(new ApiError { message = exception.Message });
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(new ApiError { message = exception.Message });
+            }
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> UpdateOrderStatus(Guid Id, [FromBody] UpdateStatusRequest request)
+        {
+            try
+            {
+                var result = await _mediator.Send(new UpdateOrderPaymentStatusCommand(Id, request));
                 return Ok(result);
 
             }

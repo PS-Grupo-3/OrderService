@@ -28,20 +28,20 @@ namespace Application.Features.Order.Queries
                 OrderId = order.OrderId,
                 UserId = order.UserId,
                 TotalAmount = order.TotalAmount,
-                PaymentType = new PaymentResponse
+                PaymentType = new GenericResponse
                 {
                     Id = order.PaymentType.PaymentId,
-                    PaymentName = order.PaymentType.PaymentName
+                    Name = order.PaymentType.PaymentName
                 },
-                PaymentStatus = new PaymentResponse
+                PaymentStatus = new GenericResponse
                 {
                     Id = order.PaymentStatus.PaymentStatusId,
-                    PaymentName = order.PaymentStatus.PaymentStatusName
+                    Name = order.PaymentStatus.PaymentStatusName
                 },
-                OrderStatus = new OrderStatusResponse
+                OrderStatus = new GenericResponse
                 {
                     Id = order.OrderStatus.OrderStatusId,
-                    StatusName = order.OrderStatus.StatusName
+                    Name = order.OrderStatus.StatusName
                 },
                 Details = order.OrderDetails.Select(od => new OrderDetailsResponse
                 {

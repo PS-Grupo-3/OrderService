@@ -1,8 +1,8 @@
 ﻿namespace Application.Models.Responses
 {
-    public class OrderStatusResponse
+    public class GenericResponse
     {
         public int Id { get; set; }
-        public string StatusName { get; set; }
+        public string Name { get; set; }
     }
 }

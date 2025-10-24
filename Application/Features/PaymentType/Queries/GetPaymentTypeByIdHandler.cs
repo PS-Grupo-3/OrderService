@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Features.PaymentType.Queries
 {
-    public class GetPaymentTypeByIdHandler : IRequestHandler<GetPaymentTypeByIdQuery, PaymentResponse>
+    public class GetPaymentTypeByIdHandler : IRequestHandler<GetPaymentTypeByIdQuery, GenericResponse>
     {
         private readonly IPaymentTypeQuery _Query;
 
@@ -13,7 +13,7 @@ namespace Application.Features.PaymentType.Queries
             _Query = query;
         }
 
-        public async Task<PaymentResponse> Handle(GetPaymentTypeByIdQuery request, CancellationToken cancellationToken)
+        public async Task<GenericResponse> Handle(GetPaymentTypeByIdQuery request, CancellationToken cancellationToken)
         {
             var payment = await _Query.GetByIdAsync(request.paymentTypeId, cancellationToken);
 
@@ -22,10 +22,10 @@ namespace Application.Features.PaymentType.Queries
                 throw new ArgumentNullException($"No se encontró el método de pago con el ID {request.paymentTypeId}");
             }
 
-            return new PaymentResponse
+            return new GenericResponse
             {
                 Id = payment.PaymentId,
-                PaymentName = payment.PaymentName
+                Name = payment.PaymentName
             };
         }
     }

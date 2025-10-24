@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.OrderStatus.Queries
 {
-    public record GetAllOrderStatusesQuery() : IRequest<List<OrderStatusResponse>>;
+    public record GetAllOrderStatusesQuery() : IRequest<List<GenericResponse>>;
 }

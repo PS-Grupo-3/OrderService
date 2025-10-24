@@ -31,6 +31,7 @@ builder.Services.AddScoped<IPaymentStatusQuery, PaymentStatusQuery>();
 builder.Services.AddScoped<IPaymentTypeQuery, PaymentTypeQuery>();
 builder.Services.AddScoped<IPaymentTypeCommand, PaymentTypeCommand>();
 
+builder.Services.AddScoped<IOrderDetailQuery, OrderDetailQuery>();
 
 
 

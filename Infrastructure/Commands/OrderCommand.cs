@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces.Command;
 using Domain.Entities;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Commands
 {
@@ -31,10 +32,10 @@ namespace Infrastructure.Commands
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<Order>UpdateOrderPaymentStatus(Order Entity,int newPaymentStatus ,CancellationToken cancellationToken = default)
+        public async Task<Order>UpdateOrderPaymentStatus(Order Entity, int newPaymentStatus ,CancellationToken cancellationToken = default)
         {
-            Entity.PaymentStatusId= newPaymentStatus;
-            switch (newPaymentStatus) 
+            Entity.PaymentStatusId = newPaymentStatus;
+            switch (newPaymentStatus)
             {
                 case 1:
                     Entity.OrderStatusId = 1;

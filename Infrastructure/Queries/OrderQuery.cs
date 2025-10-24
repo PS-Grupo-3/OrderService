@@ -49,5 +49,6 @@ namespace Infrastructure.Queries
                 .Include(o => o.OrderDetails)
                 .FirstOrDefaultAsync(order=>order.OrderId==orderId, cancellationToken);
         }
+
     }
 }

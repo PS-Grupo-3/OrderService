@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Application.Features.OrderStatus.Queries
 {
-    public class GetAllOrderStatusesHandler : IRequestHandler<GetAllOrderStatusesQuery, List<OrderStatusResponse>>
+    public class GetAllOrderStatusesHandler : IRequestHandler<GetAllOrderStatusesQuery, List<GenericResponse>>
     {
         private readonly IOrderStatusQuery _Query;
 
@@ -20,14 +20,14 @@ namespace Application.Features.OrderStatus.Queries
             _Query = query;
         }
 
-        public async Task<List<OrderStatusResponse>> Handle(GetAllOrderStatusesQuery request, CancellationToken cancellationToken)
+        public async Task<List<GenericResponse>> Handle(GetAllOrderStatusesQuery request, CancellationToken cancellationToken)
         {
             var status = await _Query.GetAllAsync(cancellationToken);
 
-            return status.Select(Status => new OrderStatusResponse
+            return status.Select(Status => new GenericResponse
             {
                 Id = Status.OrderStatusId,
-                StatusName = Status.StatusName
+                Name = Status.StatusName
             }).ToList();
         }
     }
