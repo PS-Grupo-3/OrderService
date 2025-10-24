@@ -18,13 +18,11 @@ namespace Application.Features.Order.Commands
     {
         private readonly IOrderCommand _command;
         private readonly IOrderQuery _query;
-        private readonly IOrderDetailQuery _queryDetail;
 
-        public UpdateOrderDetailsHandler(IOrderCommand command, IOrderQuery query, IOrderDetailQuery queryDetail)
+        public UpdateOrderDetailsHandler(IOrderCommand command, IOrderQuery query)
         {
             _command = command;
             _query = query;
-            _queryDetail = queryDetail;
         }
 
         public async Task<OrderResponse> Handle(UpdateOrderDetailsCommand request, CancellationToken cancellationToken)

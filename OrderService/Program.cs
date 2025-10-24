@@ -40,6 +40,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Loa
 
 var app = builder.Build();
 
+app.UseMiddleware<OrderService.Middlewares.ExceptionMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

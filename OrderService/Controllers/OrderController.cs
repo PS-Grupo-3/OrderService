@@ -22,7 +22,6 @@ namespace OrderService.Controllers
         }
 
         [HttpPost]
-        
         public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
         {
             var result = await _mediator.Send(new CreateOrderCommand(request));
@@ -33,76 +32,29 @@ namespace OrderService.Controllers
      
         public async Task<IActionResult> GetAll(DateTime? from, DateTime? to, int? status)
         {
-            try
-            {
-                var result = await _mediator.Send(new GetAllOrdersQuery(from, to, status));
-                return Ok(result);
-            }
-            catch (ArgumentException exception) 
-            {
-                return BadRequest(new ApiError { message = exception.Message });
-            }
-            
+            var result = await _mediator.Send(new GetAllOrdersQuery(from, to, status));
+            return Ok(result);
         }
 
         [HttpGet("{Id:Guid}")]
         public async Task<IActionResult> GetById(Guid Id)
         {
-            try
-            {
-                var result = await _mediator.Send(new GetOrderByIdQuery(Id));
-                return Ok(result);
-
-            }
-            catch (NotFoundException404 exception) 
-            {
-                return NotFound(new ApiError { message = exception.Message });
-            }
+            var result = await _mediator.Send(new GetOrderByIdQuery(Id));
+            return Ok(result);
         }
 
         [HttpPut("{Id:Guid}")]
         public async Task<IActionResult> Update(Guid Id, [FromBody] DetailsUpdateRequest request)
         {
-            try
-            {
-                var result = await _mediator.Send(new UpdateOrderDetailsCommand(Id, request));
-                return Ok(result);
-            }
-            catch (NotFoundException404 exception)
-            {
-                return NotFound(new ApiError { message = exception.Message });
-            }
-            catch (BadRequestException400 exception)
-            {
-                return BadRequest(new ApiError { message = exception.Message });
-            }
-            catch (ArgumentException exception)
-            {
-                return BadRequest(new ApiError { message = exception.Message });
-            }
+            var result = await _mediator.Send(new UpdateOrderDetailsCommand(Id, request));
+            return Ok(result);
         }
 
         [HttpPatch]
         public async Task<IActionResult> UpdateOrderStatus(Guid Id, [FromBody] UpdateStatusRequest request)
         {
-            try
-            {
-                var result = await _mediator.Send(new UpdateOrderPaymentStatusCommand(Id, request));
-                return Ok(result);
-
-            }
-            catch (NotFoundException404 exception)
-            {
-                return NotFound(new ApiError { message = exception.Message });
-            }
-            catch (BadRequestException400 exception)
-            {
-                return BadRequest(new ApiError { message = exception.Message });
-            }
-            catch (ArgumentException exception)
-            {
-                return BadRequest(new ApiError { message = exception.Message });
-            }
+            var result = await _mediator.Send(new UpdateOrderPaymentStatusCommand(Id, request));
+            return Ok(result);
         }
     }
 }
