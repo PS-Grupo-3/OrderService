@@ -25,7 +25,7 @@ namespace Application.Features.OrderStatus.Queries
 
             if (status is null)
             {
-                throw new ArgumentNullException($"No se encontró el estado de la órden con el ID {request.orderStatusId}");
+                throw new ArgumentException($"No se encontró el estado de la órden con el ID {request.orderStatusId}");
             }
 
             return new GenericResponse

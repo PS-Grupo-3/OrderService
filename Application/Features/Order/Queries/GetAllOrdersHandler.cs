@@ -1,7 +1,6 @@
 ﻿using Application.Interfaces.Query;
 using Application.Models.Responses;
 using MediatR;
-using System.ComponentModel.DataAnnotations;
 
 namespace Application.Features.Order.Queries
 {
@@ -11,17 +10,17 @@ namespace Application.Features.Order.Queries
 
         public GetAllOrdersHandler(IOrderQuery query)
         {
-            this._query = query;
+            _query = query;
         }
         public async Task<List<CompleteOrderResponse>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
         {
             if (request.from.HasValue && request.to.HasValue && request.from.Value > request.to.Value)
             {
-                throw new ArgumentException("Rango de fechas inválidas");
+                throw new ArgumentException($"Rango de fechas inválidos");
             }
             if (request.status <=0 || request.status > 3) 
             {
-                throw new ArgumentException("Estado inválido");
+                throw new ArgumentException($"El estado de la órden con el ID {request.status} es inválido.");
             }
 
             var orders = await _query.GetAllAsync(request.from, request.to, request.status);

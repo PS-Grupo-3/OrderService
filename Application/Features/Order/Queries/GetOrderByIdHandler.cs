@@ -2,7 +2,6 @@
 using Application.Interfaces.Query;
 using Application.Models.Responses;
 using MediatR;
-using System.ComponentModel.DataAnnotations;
 
 namespace Application.Features.Order.Queries
 {
@@ -12,7 +11,7 @@ namespace Application.Features.Order.Queries
 
         public GetOrderByIdHandler(IOrderQuery query)
         {
-            this._query = query;
+            _query = query;
         }
 
         public async Task<CompleteOrderResponse> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
@@ -20,7 +19,7 @@ namespace Application.Features.Order.Queries
             var order = await  _query.GetByIdAsync(request.orderId);
             if (order == null) 
             {
-            throw new NotFoundException404($"No se encontraron ordenes con el id {request.orderId}");
+                throw new KeyNotFoundException($"No se encontraron ordenes con el id {request.orderId}");
             }
 
             return new CompleteOrderResponse

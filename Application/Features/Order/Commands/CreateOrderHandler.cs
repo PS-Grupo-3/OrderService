@@ -3,7 +3,6 @@ using Application.Interfaces.Query;
 using Application.Models.Responses;
 using Domain.Entities;
 using MediatR;
-using System.Windows.Input;
 
 namespace Application.Features.Order.Commands
 {
@@ -24,6 +23,7 @@ namespace Application.Features.Order.Commands
         public async Task<OrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
             var PaymentType = await _PaymentType.GetByIdAsync(request.request.PaymentId);
+
             if (PaymentType == null) {
                 throw new KeyNotFoundException($"No existe un método de pago con ID {request.request.PaymentId}");
             }

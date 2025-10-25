@@ -10,12 +10,10 @@ namespace Application.Features.Order.Commands
     {
         private readonly IOrderCommand command;
         private readonly IOrderQuery query;
-        private readonly IOrderStatusQuery _OrderStatusQuery;
-        public UpdateOrderPaymentStatusHandler(IOrderCommand command, IOrderQuery _query, IOrderStatusQuery OrderStatusQuery)
+        public UpdateOrderPaymentStatusHandler(IOrderCommand command, IOrderQuery _query)
         {
             this.command = command;
             this.query = _query;
-            this._OrderStatusQuery = OrderStatusQuery;
 
         }
 
@@ -25,7 +23,7 @@ namespace Application.Features.Order.Commands
 
             if (order == null)
             {
-                throw new NotFoundException404($"No se encontró la orden con el id {request.Id}");
+                throw new KeyNotFoundException($"No se encontró la orden con el id {request.Id}");
             }
 
             if (request.request.Status <= 0 || request.request.Status > 3)
@@ -35,13 +33,10 @@ namespace Application.Features.Order.Commands
 
             if (request.request.Status < order.PaymentStatusId) 
             {
-                throw new BadRequestException400($"No se puede actualizar a un estado previo");
+                throw new ArgumentException($"No se puede actualizar a un estado previo");
             }
             
             await command.UpdateOrderPaymentStatus(order, request.request.Status, cancellationToken);
-
-            //Lo actualizo.
-            var newOrder = await query.GetByIdAsync(order.OrderId, cancellationToken);
 
             return new OrderResponse
             {

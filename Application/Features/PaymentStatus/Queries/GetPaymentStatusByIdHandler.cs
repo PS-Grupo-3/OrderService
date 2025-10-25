@@ -19,7 +19,7 @@ namespace Application.Features.PaymentStatus.Queries
 
             if (payment is null)
             {
-                throw new ArgumentNullException($"No se encontró el método de pago con el ID {request.paymentStatusId}");
+                throw new ArgumentException($"No se encontró el método de pago con el ID {request.paymentStatusId}");
             }
 
             return new GenericResponse
