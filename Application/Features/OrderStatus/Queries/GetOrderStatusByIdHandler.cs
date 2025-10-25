@@ -1,12 +1,6 @@
-﻿using Application.Features.PaymentStatus.Queries;
-using Application.Interfaces.Query;
+﻿using Application.Interfaces.Query;
 using Application.Models.Responses;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Features.OrderStatus.Queries
 {

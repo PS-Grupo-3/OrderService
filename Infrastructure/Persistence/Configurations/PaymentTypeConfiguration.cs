@@ -14,12 +14,11 @@ namespace Infrastructure.Persistence.Configurations
 
 
             builder.HasData
-                (
+            (
                 new PaymentType { PaymentId = 1, PaymentName = "Efectivo" },
                 new PaymentType { PaymentId = 2, PaymentName = "Mercado Pago" },
                 new PaymentType { PaymentId = 3, PaymentName = "Metodo bancario" }
-                  
-                );
+            );
         }
     }
 }

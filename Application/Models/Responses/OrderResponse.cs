@@ -1,5 +1,4 @@
-﻿
-namespace Application.Models.Responses
+﻿namespace Application.Models.Responses
 {
     public class OrderResponse
     {

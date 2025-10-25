@@ -12,9 +12,9 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.HasData
             (
-            new PaymentStatus {PaymentStatusId=1,PaymentStatusName="Pending" },
-            new PaymentStatus {PaymentStatusId=2,PaymentStatusName="Paid"},
-            new PaymentStatus {PaymentStatusId = 3, PaymentStatusName = "Canceled" }
+                new PaymentStatus {PaymentStatusId=1,PaymentStatusName="Pending" },
+                new PaymentStatus {PaymentStatusId=2,PaymentStatusName="Paid"},
+                new PaymentStatus {PaymentStatusId = 3, PaymentStatusName = "Canceled" }
             );
 
         

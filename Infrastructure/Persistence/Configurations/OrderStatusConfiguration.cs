@@ -14,7 +14,8 @@ namespace Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasMaxLength(100);
 
-            builder.HasData(
+            builder.HasData
+            (
                 new OrderStatus { OrderStatusId = 1, StatusName = "Pending" },
                 new OrderStatus { OrderStatusId = 2, StatusName = "Paid" },
                 new OrderStatus { OrderStatusId = 3, StatusName = "Canceled" }

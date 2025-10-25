@@ -1,5 +1,4 @@
-﻿
-namespace Application.Models.Requests
+﻿namespace Application.Models.Requests
 {
     public class UpdateStatusRequest
     {

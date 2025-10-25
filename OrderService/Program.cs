@@ -1,6 +1,5 @@
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting;
 using System.Reflection;
 using Application.Interfaces.Command;
 using Infrastructure.Commands;

@@ -10,14 +10,10 @@ namespace Application.Features.Order.Commands
     {
         private readonly IOrderCommand _Command;
         private readonly IPaymentTypeQuery _PaymentType;
-        private readonly IPaymentStatusQuery _PaymentStatus;
-        private readonly IOrderStatusQuery _OrderStatusQuery;
-        public CreateOrderHandler(IOrderCommand command, IPaymentTypeQuery PaymentType, IPaymentStatusQuery PaymentStatus, IOrderStatusQuery orderStatusQuery)
+        public CreateOrderHandler(IOrderCommand command, IPaymentTypeQuery PaymentType)
         {
             _Command = command;
             _PaymentType = PaymentType;
-            _PaymentStatus = PaymentStatus;
-            _OrderStatusQuery = orderStatusQuery;
         }
 
         public async Task<OrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)

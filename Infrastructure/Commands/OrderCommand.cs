@@ -1,7 +1,6 @@
 ﻿using Application.Interfaces.Command;
 using Domain.Entities;
 using Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Commands
 {
