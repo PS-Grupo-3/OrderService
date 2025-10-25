@@ -7,12 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <Compile Remove="Features\PaymentType\Command\**" />
+    <EmbeddedResource Remove="Features\PaymentType\Command\**" />
+    <None Remove="Features\PaymentType\Command\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\OrderStatus\Commands\" />
-    <Folder Include="Features\PaymentType\Command\" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

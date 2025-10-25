@@ -1,16 +1,8 @@
-﻿using Application.Exceptions;
-using Application.Interfaces.Command;
+﻿using Application.Interfaces.Command;
 using Application.Interfaces.Query;
 using Application.Models.Responses;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Application.Features.Order.Commands
 {
@@ -30,10 +22,10 @@ namespace Application.Features.Order.Commands
             var order = await _query.GetByIdAsync(request.Id, cancellationToken);
 
             if (order == null)
-                throw new NotFoundException404($"No se encontró la orden con el id {request.Id}");
+                throw new KeyNotFoundException($"No se encontró la orden con el id {request.Id}");
 
             if (order.OrderStatusId != 1)
-                throw new BadRequestException400($"El estado de la orden {request.Id} no es pendiente.");
+                throw new KeyNotFoundException($"El estado de la orden {request.Id} no es pendiente.");
 
             foreach (var detail in request.request.Details)
             {

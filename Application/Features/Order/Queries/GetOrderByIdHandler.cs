@@ -18,7 +18,7 @@ namespace Application.Features.Order.Queries
             var order = await  _query.GetByIdAsync(request.orderId);
             if (order == null) 
             {
-                throw new KeyNotFoundException($"No se encontraron ordenes con el id {request.orderId}");
+                throw new KeyNotFoundException($"No se encontraron ordenes con el ID {request.orderId}");
             }
 
             return new CompleteOrderResponse

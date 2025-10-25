@@ -18,10 +18,15 @@ namespace Application.Features.Order.Commands
 
         public async Task<OrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
+            if (request.request.PaymentId <= 0)
+            {
+                throw new ArgumentException($"El método de pago con el ID {request.request.PaymentId} es inválido");
+            }
+
             var PaymentType = await _PaymentType.GetByIdAsync(request.request.PaymentId);
 
-            if (PaymentType == null) {
-                throw new KeyNotFoundException($"No existe un método de pago con ID {request.request.PaymentId}");
+            if (PaymentType is null) {
+                throw new KeyNotFoundException($"No se encontró método de pago con el ID {request.request.PaymentId}.");
             }
 
             double totalAmount = 0;
@@ -29,12 +34,12 @@ namespace Application.Features.Order.Commands
             
             foreach (var detail in request.request.Details)
             {
-                if (detail.UnitPrice < 0)
+                if (detail.UnitPrice <= 0)
                 {
-                    throw new ArgumentException($"El precio {detail.UnitPrice} no es válido.");
+                    throw new ArgumentException($"El precio ${detail.UnitPrice} no es válido.");
                 }
                 
-                if (detail.Quantity < 0)
+                if (detail.Quantity <= 0)
                 {
                     throw new ArgumentException($"La cantidad {detail.Quantity} no es válido.");
                 }

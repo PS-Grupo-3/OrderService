@@ -15,11 +15,16 @@ namespace Application.Features.OrderStatus.Queries
 
         public async Task<GenericResponse> Handle(GetOrderStatusByIdQuery request, CancellationToken cancellationToken)
         {
+            if (request.orderStatusId <= 0)
+            {
+                throw new ArgumentException($"El método de pago con el ID {request.orderStatusId} es inválido");
+            }
+
             var status = await _Query.GetByIdAsync(request.orderStatusId, cancellationToken);
 
             if (status is null)
             {
-                throw new ArgumentException($"No se encontró el estado de la órden con el ID {request.orderStatusId}");
+                throw new KeyNotFoundException($"No se encontró el estado de la órden con el ID {request.orderStatusId} es onválido");
             }
 
             return new GenericResponse

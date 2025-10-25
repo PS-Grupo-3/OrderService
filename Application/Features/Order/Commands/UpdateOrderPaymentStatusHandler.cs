@@ -22,7 +22,7 @@ namespace Application.Features.Order.Commands
 
             if (order == null)
             {
-                throw new KeyNotFoundException($"No se encontró la orden con el id {request.Id}");
+                throw new KeyNotFoundException($"No se encontró la orden con el ID {request.Id}");
             }
 
             if (request.request.Status <= 0 || request.request.Status > 3)

@@ -15,11 +15,16 @@ namespace Application.Features.PaymentStatus.Queries
 
         public async Task<GenericResponse> Handle(GetPaymentStatusByIdQuery request, CancellationToken cancellationToken)
         {
+            if (request.paymentStatusId <= 0)
+            {
+                throw new ArgumentException($"El estado del método de pago con el ID {request.paymentStatusId} es inválido");
+            }
+
             var payment = await _Query.GetByIdAsync(request.paymentStatusId, cancellationToken);
 
             if (payment is null)
             {
-                throw new ArgumentException($"No se encontró el método de pago con el ID {request.paymentStatusId}");
+                throw new KeyNotFoundException($"No se encontró el estado del método de pago con el ID {request.paymentStatusId}");
             }
 
             return new GenericResponse
