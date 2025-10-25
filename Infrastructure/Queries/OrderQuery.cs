@@ -14,7 +14,7 @@ namespace Infrastructure.Queries
             _context = context;
         }
 
-        public async Task<IEnumerable<Order>> GetAllAsync(DateTime? from, DateTime? to, int? status, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Order>> GetAllAsync(DateTime? from, DateTime? to, int? status, Guid? userId, CancellationToken cancellationToken = default)
         {
             var query = _context.Orders
                 .Include(o => o.PaymentStatus)
@@ -34,6 +34,10 @@ namespace Infrastructure.Queries
             if (status.HasValue)
             {
                 query = query.Where(o => o.OrderStatusId == status.Value);
+            }
+            if (userId.HasValue)
+            {
+                query = query.Where(o => o.UserId == userId.Value);
             }
 
             return await query.ToListAsync(cancellationToken);

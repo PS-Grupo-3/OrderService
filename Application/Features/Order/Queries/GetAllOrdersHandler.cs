@@ -23,7 +23,7 @@ namespace Application.Features.Order.Queries
                 throw new ArgumentException($"El estado de la órden con el ID {request.status} es inválido.");
             }
 
-            var orders = await _query.GetAllAsync(request.from, request.to, request.status);
+            var orders = await _query.GetAllAsync(request.from, request.to, request.status, request.userId);
 
             var response = orders.Select(order => new CompleteOrderResponse
             {

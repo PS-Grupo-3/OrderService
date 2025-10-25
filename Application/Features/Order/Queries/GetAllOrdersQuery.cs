@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Application.Features.Order.Queries
 {
-    public record class GetAllOrdersQuery(DateTime? from, DateTime? to, int? status) : IRequest<List<CompleteOrderResponse>>;
+    public record class GetAllOrdersQuery(DateTime? from, DateTime? to, int? status, Guid? userId) : IRequest<List<CompleteOrderResponse>>;
 }

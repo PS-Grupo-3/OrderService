@@ -26,14 +26,13 @@ namespace OrderService.Controllers
         }
 
         [HttpGet]
-     
-        public async Task<IActionResult> GetAll(DateTime? from, DateTime? to, int? status)
+        public async Task<IActionResult> GetAll(DateTime? from, DateTime? to, int? status, Guid? userId)
         {
-            var result = await _mediator.Send(new GetAllOrdersQuery(from, to, status));
+            var result = await _mediator.Send(new GetAllOrdersQuery(from, to, status, userId));
             return Ok(result);
         }
 
-        [HttpGet("{Id:Guid}")]
+        [HttpGet("{Id}")]
         public async Task<IActionResult> GetById(Guid Id)
         {
             var result = await _mediator.Send(new GetOrderByIdQuery(Id));
@@ -47,7 +46,7 @@ namespace OrderService.Controllers
             return Ok(result);
         }
 
-        [HttpPatch]
+        [HttpPatch("{Id}")]
         public async Task<IActionResult> UpdateOrderStatus(Guid Id, [FromBody] UpdateStatusRequest request)
         {
             var result = await _mediator.Send(new UpdateOrderPaymentStatusCommand(Id, request));
