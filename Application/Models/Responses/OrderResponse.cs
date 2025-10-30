@@ -4,6 +4,7 @@
     {
         public Guid OrderId { get; set; }
         public DateTime CreateAt { get; set; }
+        public DateTime ExpiresAt { get; set; }
         public double TotalAmount { get; set; }
     }
 }

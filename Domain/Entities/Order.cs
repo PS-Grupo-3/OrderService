@@ -5,6 +5,7 @@
         public Guid OrderId { get; set; }
         public Guid UserId { get; set; }
         public DateTime BuyDate { get; set; }
+        public DateTime ExpiresAt { get; set; }
         public double TotalAmount { get; set; }
         public int PaymentId { get; set; }
         public int  PaymentStatusId { get; set; }

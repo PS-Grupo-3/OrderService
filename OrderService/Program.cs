@@ -2,9 +2,11 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Application.Interfaces.Command;
+
 using Infrastructure.Commands;
 using Infrastructure.Queries;
 using Application.Interfaces.Query;
+using OrderService.BackgroundServices;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,9 +32,12 @@ builder.Services.AddScoped<IPaymentStatusQuery, PaymentStatusQuery>();
 builder.Services.AddScoped<IPaymentTypeQuery, PaymentTypeQuery>();
 builder.Services.AddScoped<IPaymentTypeCommand, PaymentTypeCommand>();
 
-
+builder.Services.AddScoped<IOrderDetailCommand, OrderDetailCommand>();
+builder.Services.AddScoped<IOrderDetailQuery, OrderDetailQuery>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("Application")));
+builder.Services.AddHostedService<OrderExpiration>();
+
 //End Custom
 
 

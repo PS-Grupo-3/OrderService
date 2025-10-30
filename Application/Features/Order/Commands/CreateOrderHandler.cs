@@ -59,7 +59,8 @@ namespace Application.Features.Order.Commands
             var order = new Domain.Entities.Order
             {
                 UserId = request.request.UserId,
-                BuyDate = DateTime.UtcNow,
+                BuyDate = DateTime.Now,
+                ExpiresAt = DateTime.Now.AddMinutes(5),
                 TotalAmount = totalAmount,
                 PaymentId = request.request.PaymentId,
                 PaymentStatusId = 1,
@@ -73,6 +74,7 @@ namespace Application.Features.Order.Commands
             {
                 OrderId = order.OrderId,
                 CreateAt = order.BuyDate,
+                ExpiresAt = order.ExpiresAt,
                 TotalAmount = order.TotalAmount
             };
            
