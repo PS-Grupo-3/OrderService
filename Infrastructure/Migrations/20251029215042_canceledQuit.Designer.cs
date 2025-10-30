@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251023054046_init")]
-    partial class init
+    [Migration("20251029215042_canceledQuit")]
+    partial class canceledQuit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -119,11 +119,6 @@ namespace Infrastructure.Migrations
                         {
                             OrderStatusId = 2,
                             StatusName = "Paid"
-                        },
-                        new
-                        {
-                            OrderStatusId = 3,
-                            StatusName = "Canceled"
                         });
                 });
 
@@ -153,11 +148,6 @@ namespace Infrastructure.Migrations
                         {
                             PaymentStatusId = 2,
                             PaymentStatusName = "Paid"
-                        },
-                        new
-                        {
-                            PaymentStatusId = 3,
-                            PaymentStatusName = "Canceled"
                         });
                 });
 
@@ -228,7 +218,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");

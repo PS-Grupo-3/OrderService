@@ -13,7 +13,7 @@ namespace OrderService.Controllers
     {
         private readonly IMediator _mediator;
 
-        public OrderController(IMediator mediator) 
+        public OrderController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -52,5 +52,14 @@ namespace OrderService.Controllers
             var result = await _mediator.Send(new UpdateOrderPaymentStatusCommand(Id, request));
             return Ok(result);
         }
+
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteOrder(Guid Id) 
+        {
+            var result = await _mediator.Send(new DeleteOrderCommand(Id));
+            return Ok(result);
+        }
+
+
     }
 }

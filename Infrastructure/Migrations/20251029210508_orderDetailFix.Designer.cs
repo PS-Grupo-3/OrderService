@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251029210508_orderDetailFix")]
+    partial class orderDetailFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,9 +32,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("BuyDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("OrderStatusId")
@@ -83,16 +83,11 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<string>("transactionId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("DetailId");
 
                     b.HasIndex("OrderId");
 
                     b.HasIndex("TicketId");
-
-                    b.HasIndex("transactionId");
 
                     b.ToTable("OrderDetails");
                 });
@@ -124,6 +119,11 @@ namespace Infrastructure.Migrations
                         {
                             OrderStatusId = 2,
                             StatusName = "Paid"
+                        },
+                        new
+                        {
+                            OrderStatusId = 3,
+                            StatusName = "Canceled"
                         });
                 });
 
@@ -153,6 +153,11 @@ namespace Infrastructure.Migrations
                         {
                             PaymentStatusId = 2,
                             PaymentStatusName = "Paid"
+                        },
+                        new
+                        {
+                            PaymentStatusId = 3,
+                            PaymentStatusName = "Canceled"
                         });
                 });
 

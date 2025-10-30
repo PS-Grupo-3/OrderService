@@ -12,6 +12,7 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.HasIndex(d => d.OrderId);
             builder.HasIndex(d => d.TicketId);
+            builder.HasIndex(d => d.transactionId);
 
             builder.Property(d => d.UnitPrice)
                 .IsRequired()
@@ -27,7 +28,7 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasOne(d => d.Order)
                 .WithMany(o => o.OrderDetails)
                 .HasForeignKey(o => o.OrderId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

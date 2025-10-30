@@ -45,6 +45,7 @@ namespace Application.Features.Order.Queries
                 {
                     DetailId = od.DetailId,
                     TicketId = od.TicketId,
+                    transactionId=od.transactionId,
                     UnitPrice = od.UnitPrice,
                     Quantity = od.Quantity,
                     SubTotal = od.Subtotal

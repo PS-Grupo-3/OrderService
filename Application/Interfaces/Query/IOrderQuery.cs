@@ -7,5 +7,7 @@ namespace Application.Interfaces.Query
         Task<IEnumerable<Order>> GetAllAsync(DateTime? from, DateTime? to, int? status, Guid? userId, CancellationToken cancellationToken = default);
         Task<Order> GetByIdAsync(Guid orderId,CancellationToken cancellationToken=default);
 
+        Task<IEnumerable<Order>> GetExpiredOrders(CancellationToken cancellationToken=default);
+
     }
 }
