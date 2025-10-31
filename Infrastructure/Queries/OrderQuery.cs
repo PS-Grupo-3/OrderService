@@ -14,31 +14,32 @@ namespace Infrastructure.Queries
             _context = context;
         }
 
-        public async Task<IEnumerable<Order>> GetAllAsync(DateTime? from, DateTime? to, int? status, Guid? userId, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Order>> GetAllAsync(DateTime? from, DateTime? to, int? payment, Guid? userId, CancellationToken cancellationToken = default)
         {
             var query = _context.Orders
                 .Include(o => o.PaymentStatus)
                 .Include(o => o.PaymentType)
-                .Include(o => o.OrderStatus)
                 .Include(o => o.OrderDetails)
                 .AsQueryable();
 
             if (from.HasValue)
             {
-                query = query.Where(o => o.BuyDate >= from.Value);
+                query = query.Where(o => o.CreatedAt >= from.Value);
             }
             if (to.HasValue)
             {
-                query = query.Where(o => o.BuyDate <= to.Value);
+                query = query.Where(o => o.CreatedAt <= to.Value);
             }
-            if (status.HasValue)
+            if (payment.HasValue)
             {
-                query = query.Where(o => o.OrderStatusId == status.Value);
+                query = query.Where(o => o.PaymentId == payment.Value);
             }
             if (userId.HasValue)
             {
                 query = query.Where(o => o.UserId == userId.Value);
             }
+
+            query = query.Where(o => o.PaymentStatusId == 2);
 
             return await query.ToListAsync(cancellationToken);
         }
@@ -48,10 +49,15 @@ namespace Infrastructure.Queries
             return await _context.Orders
                 .Include(o => o.PaymentStatus)
                 .Include(o => o.PaymentType)
-                .Include(o => o.OrderStatus)
                 .Include(o => o.OrderDetails)
                 .FirstOrDefaultAsync(order=>order.OrderId==orderId, cancellationToken);
         }
 
+        public async Task<IEnumerable<Order>> GetExpiredOrders(CancellationToken cancellationToken = default)
+        {
+            return await _context.Orders
+                .Where(o => o.CreatedAt.AddMinutes(5) <= DateTime.UtcNow && o.PaymentStatusId == 1)
+                .ToListAsync(cancellationToken);
+        }
     }
 }

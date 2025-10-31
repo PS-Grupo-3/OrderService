@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Application.Exceptions;
+using System.Net;
 using System.Text.Json;
 
 namespace OrderService.Middlewares
@@ -35,6 +36,7 @@ namespace OrderService.Middlewares
                 KeyNotFoundException => HttpStatusCode.NotFound,
                 ArgumentException => HttpStatusCode.BadRequest,
                 UnauthorizedAccessException => HttpStatusCode.Unauthorized,
+                ConflictException => HttpStatusCode.Conflict,
                 _ => HttpStatusCode.InternalServerError
             };
 

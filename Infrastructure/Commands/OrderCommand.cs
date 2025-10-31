@@ -26,29 +26,9 @@ namespace Infrastructure.Commands
         }
 
         public async Task DeleteAsync(Order entity, CancellationToken cancellationToken = default)
-        {
+        { 
             _context.Orders.Remove(entity);
             await _context.SaveChangesAsync(cancellationToken);
-        }
-
-        public async Task<Order>UpdateOrderPaymentStatus(Order Entity, int newPaymentStatus ,CancellationToken cancellationToken = default)
-        {
-            Entity.PaymentStatusId = newPaymentStatus;
-            switch (newPaymentStatus)
-            {
-                case 1:
-                    Entity.OrderStatusId = 1;
-                    break;
-                case 2:
-                    Entity.OrderStatusId = 2;
-                    break;
-                case 3:
-                    Entity.OrderStatusId = 3;
-                    break;
-            }
-            _context.Orders.Update(Entity);
-            await _context.SaveChangesAsync(cancellationToken);
-            return Entity;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace OrderService.Controllers
     {
         private readonly IMediator _mediator;
 
-        public OrderController(IMediator mediator) 
+        public OrderController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -22,7 +22,7 @@ namespace OrderService.Controllers
         public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
         {
             var result = await _mediator.Send(new CreateOrderCommand(request));
-            return CreatedAtAction(nameof(GetById), new { id = result.OrderId }, result);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
         [HttpGet]
@@ -39,18 +39,20 @@ namespace OrderService.Controllers
             return Ok(result);
         }
 
-        [HttpPut("{Id:Guid}")]
-        public async Task<IActionResult> Update(Guid Id, [FromBody] DetailsUpdateRequest request)
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> Update(Guid Id, [FromBody] UpdateOrderRequest request)
         {
-            var result = await _mediator.Send(new UpdateOrderDetailsCommand(Id, request));
+            var result = await _mediator.Send(new UpdateOrderCommand(Id, request));
             return Ok(result);
         }
 
-        [HttpPatch("{Id}")]
-        public async Task<IActionResult> UpdateOrderStatus(Guid Id, [FromBody] UpdateStatusRequest request)
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> Delete(Guid Id) 
         {
-            var result = await _mediator.Send(new UpdateOrderPaymentStatusCommand(Id, request));
+            var result = await _mediator.Send(new DeleteOrderCommand(Id));
             return Ok(result);
         }
+
+
     }
 }

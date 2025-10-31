@@ -8,20 +8,16 @@ namespace Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<PaymentStatus> builder) 
         {
+            builder.ToTable(nameof(PaymentStatus));
+
             builder.HasKey(Ps => Ps.PaymentStatusId);
 
             builder.HasData
             (
-                new PaymentStatus {PaymentStatusId=1,PaymentStatusName="Pending" },
-                new PaymentStatus {PaymentStatusId=2,PaymentStatusName="Paid"},
-                new PaymentStatus {PaymentStatusId = 3, PaymentStatusName = "Canceled" }
+                new PaymentStatus { PaymentStatusId = 1, PaymentStatusName = "Pending" },
+                new PaymentStatus { PaymentStatusId = 2, PaymentStatusName = "Paid"}
+               
             );
-
-        
-        
         }
-
-
-
     }
 }

@@ -2,7 +2,8 @@
 using Application.Models.Responses;
 using MediatR;
 
+
 namespace Application.Features.Order.Commands
 {
-    public record class UpdateOrderDetailsCommand(Guid Id, DetailsUpdateRequest request) : IRequest<OrderResponse>;
+    public record UpdateOrderCommand(Guid Id, UpdateOrderRequest request) : IRequest<UpdatedOrderResponse>;
 }

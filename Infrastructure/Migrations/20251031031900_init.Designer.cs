@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251023054046_init")]
+    [Migration("20251031031900_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -31,11 +31,23 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("BuyDate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("OrderStatusId")
-                        .HasColumnType("int");
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<DateTime>("EventDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EventName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PaymentDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PaymentId")
                         .HasColumnType("int");
@@ -46,12 +58,21 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18, 2)");
 
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("OrderId");
+                    b.Property<string>("VenueAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("OrderStatusId");
+                    b.Property<string>("VenueName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("OrderId");
 
                     b.HasIndex("PaymentId");
 
@@ -59,7 +80,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Order", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.OrderDetail", b =>
@@ -68,13 +89,23 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal?>("Discount")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<string>("SectorName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<decimal?>("Tax")
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<Guid>("TicketId")
@@ -89,42 +120,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("OrderDetails");
-                });
-
-            modelBuilder.Entity("Domain.Entities.OrderStatus", b =>
-                {
-                    b.Property<int>("OrderStatusId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderStatusId"));
-
-                    b.Property<string>("StatusName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("OrderStatusId");
-
-                    b.ToTable("OrderStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            OrderStatusId = 1,
-                            StatusName = "Pending"
-                        },
-                        new
-                        {
-                            OrderStatusId = 2,
-                            StatusName = "Paid"
-                        },
-                        new
-                        {
-                            OrderStatusId = 3,
-                            StatusName = "Canceled"
-                        });
+                    b.ToTable("OrderDetail", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.PaymentStatus", b =>
@@ -141,7 +137,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("PaymentStatusId");
 
-                    b.ToTable("PaymentStatuses");
+                    b.ToTable("PaymentStatus", (string)null);
 
                     b.HasData(
                         new
@@ -153,11 +149,6 @@ namespace Infrastructure.Migrations
                         {
                             PaymentStatusId = 2,
                             PaymentStatusName = "Paid"
-                        },
-                        new
-                        {
-                            PaymentStatusId = 3,
-                            PaymentStatusName = "Canceled"
                         });
                 });
 
@@ -176,7 +167,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("PaymentId");
 
-                    b.ToTable("PaymentTypes");
+                    b.ToTable("PaymentType", (string)null);
 
                     b.HasData(
                         new
@@ -198,12 +189,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Order", b =>
                 {
-                    b.HasOne("Domain.Entities.OrderStatus", "OrderStatus")
-                        .WithMany("Orders")
-                        .HasForeignKey("OrderStatusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.PaymentType", "PaymentType")
                         .WithMany("Orders")
                         .HasForeignKey("PaymentId")
@@ -216,8 +201,6 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("OrderStatus");
-
                     b.Navigation("PaymentStatus");
 
                     b.Navigation("PaymentType");
@@ -228,7 +211,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -237,11 +220,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Order", b =>
                 {
                     b.Navigation("OrderDetails");
-                });
-
-            modelBuilder.Entity("Domain.Entities.OrderStatus", b =>
-                {
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Domain.Entities.PaymentStatus", b =>

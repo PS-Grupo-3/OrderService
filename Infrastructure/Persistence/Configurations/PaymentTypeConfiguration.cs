@@ -8,10 +8,13 @@ namespace Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<PaymentType> builder)
         {
+            builder.ToTable(nameof(PaymentType));
+
             builder.HasKey(p => p.PaymentId);
-            builder.Property(p => p.PaymentName).IsRequired().HasMaxLength(100);
 
-
+            builder.Property(p => p.PaymentName)
+                .IsRequired()
+                .HasMaxLength(100);
 
             builder.HasData
             (

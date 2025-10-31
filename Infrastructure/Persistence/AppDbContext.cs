@@ -10,7 +10,6 @@ namespace Infrastructure.Persistence
         }
 
         public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderStatus> OrderStatuses { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<PaymentType> PaymentTypes{ get; set; }
         public DbSet<PaymentStatus> PaymentStatuses { get; set; }
