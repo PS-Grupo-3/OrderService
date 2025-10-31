@@ -51,7 +51,7 @@ namespace Infrastructure.Migrations
                     VenueAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Currency = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
-                    PaymentId = table.Column<int>(type: "int", nullable: false),
+                    PaymentId = table.Column<int>(type: "int", nullable: true),
                     PaymentStatusId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: true),

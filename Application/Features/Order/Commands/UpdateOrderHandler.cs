@@ -75,6 +75,7 @@ namespace Application.Features.Order.Commands
 
                 orderDetails.Add(new OrderDetail
                 {
+                    DetailId = Guid.NewGuid(),
                     TicketId = detail.TicketId,
                     SectorName = detail.Sector,
                     Quantity = detail.Quantity,
@@ -90,24 +91,29 @@ namespace Application.Features.Order.Commands
             order.PaymentId = request.request.PaymentType;
             order.PaymentStatusId = 2;
             order.PaymentDate = DateTime.UtcNow;
-            order.TransactionId = $"MP-{new Guid()}";
+            order.TransactionId = $"MP-{Guid.NewGuid()}";
+            //order.OrderDetails = orderDetails; /* <-- falla en orderdetails. */
 
             await _command.UpdateAsync(order);
 
+            var updatedOrder = await _query.GetByIdAsync(order.OrderId, cancellationToken);
+
+
             return new UpdatedOrderResponse
             {
-                Id = order.OrderId,
-                Event = order.EventName,
-                EventDate = order.EventDate,
-                Venue = order.VenueName,
-                Address = order.VenueAddress,
-                TotalAmount = order.TotalAmount,
+                Id = updatedOrder.OrderId,
+                Event = updatedOrder.EventName,
+                EventDate = updatedOrder.EventDate,
+                Venue = updatedOrder.VenueName,
+                Address = updatedOrder.VenueAddress,
+                TotalAmount = updatedOrder.TotalAmount,
                 Payment = new GenericResponse
                 {
-                    Id = order.PaymentStatus.PaymentStatusId,
-                    Name = order.PaymentStatus.PaymentStatusName
+                    Id = updatedOrder.PaymentStatus.PaymentStatusId,
+                    Name = updatedOrder.PaymentStatus.PaymentStatusName
                 },
-                PaymentDate = order.PaymentDate
+                PaymentDate = updatedOrder.PaymentDate,
+                Transaction = updatedOrder.TransactionId
             };
         }
     }

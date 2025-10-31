@@ -17,6 +17,7 @@ namespace Application.Features.Order.Commands
         {
             var order = new Domain.Entities.Order
             {
+                OrderId = new Guid(),
                 UserId = request.request.UserId,
                 EventName = request.request.Event,
                 EventDate = request.request.EventDate,
@@ -24,10 +25,10 @@ namespace Application.Features.Order.Commands
                 VenueAddress = request.request.Address,
                 TotalAmount = 0,
                 Currency = "ARS",
-                PaymentId = 0,
+                PaymentId = 1,
                 PaymentStatusId = 1,
                 CreatedAt = DateTime.UtcNow,
-                PaymentDate = null
+                PaymentDate = null,
             };
 
             await _command.InsertAsync(order);

@@ -33,10 +33,11 @@ namespace Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasMaxLength(3);
 
-            builder.HasOne(o=> o.PaymentType)
-                .WithMany(p=>p.Orders)
-                .HasForeignKey(o=>o.PaymentId)
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(o => o.PaymentType)
+                .WithMany(p => p.Orders)
+                .HasForeignKey(o => o.PaymentId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
 
             builder.HasOne(o=>o.PaymentStatus)
                 .WithMany(ps=>ps.Orders)

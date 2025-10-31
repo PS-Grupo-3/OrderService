@@ -46,7 +46,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("PaymentId")
+                    b.Property<int?>("PaymentId")
                         .HasColumnType("int");
 
                     b.Property<int>("PaymentStatusId")
@@ -189,8 +189,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.PaymentType", "PaymentType")
                         .WithMany("Orders")
                         .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.PaymentStatus", "PaymentStatus")
                         .WithMany("Orders")
