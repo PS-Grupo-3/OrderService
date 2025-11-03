@@ -52,7 +52,6 @@ namespace Application.Features.Order.Commands
             }
             
             double totalAmount = 0;
-            var orderDetails = new List<OrderDetail>();
 
             foreach (var detail in request.request.Details)
             {
@@ -73,16 +72,18 @@ namespace Application.Features.Order.Commands
                 double subTotal = baseAmount - discountAmount + taxAmount;
                 totalAmount += subTotal;
 
-                orderDetails.Add(new OrderDetail
+                order.OrderDetails.Add(new OrderDetail
                 {
                     DetailId = Guid.NewGuid(),
+                    OrderId = order.OrderId,
                     TicketId = detail.TicketId,
                     SectorName = detail.Sector,
                     Quantity = detail.Quantity,
                     UnitPrice = detail.UnitPrice,
                     Subtotal = subTotal,
                     Discount = detail.Discount,
-                    Tax = detail.Tax
+                    Tax = detail.Tax,
+                    Order = order
                 });
             }
 
@@ -92,9 +93,8 @@ namespace Application.Features.Order.Commands
             order.PaymentStatusId = 2;
             order.PaymentDate = DateTime.UtcNow;
             order.TransactionId = $"MP-{Guid.NewGuid()}";
-            //order.OrderDetails = orderDetails; /* <-- falla en orderdetails. */
 
-            await _command.UpdateAsync(order);
+            await _command.UpdateAsync(order, cancellationToken);
 
             var updatedOrder = await _query.GetByIdAsync(order.OrderId, cancellationToken);
 

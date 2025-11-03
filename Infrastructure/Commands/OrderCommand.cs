@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces.Command;
 using Domain.Entities;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Commands
 {
@@ -21,9 +22,22 @@ namespace Infrastructure.Commands
 
         public async Task UpdateAsync(Order entity, CancellationToken cancellationToken = default)
         {
-            _context.Orders.Update(entity);
+            _context.Attach(entity);
+
+            _context.Entry(entity).State = EntityState.Modified;
+
+            // Marcar los nuevos detalles como agregados
+            foreach (var detail in entity.OrderDetails)
+            {
+                if (!_context.OrderDetails.Any(d => d.DetailId == detail.DetailId))
+                {
+                    _context.Entry(detail).State = EntityState.Added;
+                }
+            }
+
             await _context.SaveChangesAsync(cancellationToken);
         }
+
 
         public async Task DeleteAsync(Order entity, CancellationToken cancellationToken = default)
         { 
