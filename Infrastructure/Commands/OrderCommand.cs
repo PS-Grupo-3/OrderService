@@ -38,7 +38,6 @@ namespace Infrastructure.Commands
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-
         public async Task DeleteAsync(Order entity, CancellationToken cancellationToken = default)
         { 
             _context.Orders.Remove(entity);

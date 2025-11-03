@@ -26,9 +26,9 @@ namespace OrderService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(DateTime? from, DateTime? to, int? status, Guid? userId)
+        public async Task<IActionResult> GetAll(DateTime? from, DateTime? to, int? paymentType, Guid? userId)
         {
-            var result = await _mediator.Send(new GetAllOrdersQuery(from, to, status, userId));
+            var result = await _mediator.Send(new GetAllOrdersQuery(from, to, paymentType, userId));
             return Ok(result);
         }
 
