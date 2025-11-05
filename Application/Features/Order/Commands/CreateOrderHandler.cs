@@ -15,6 +15,19 @@ namespace Application.Features.Order.Commands
 
         public async Task<CreatedOrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrEmpty(request.request.Event)) 
+            {
+                throw new ArgumentException($"Se requiere un nombre de evento");
+            }
+            if (string.IsNullOrEmpty(request.request.Address))
+            {
+                throw new ArgumentException($"Se requiere una dirección");
+            }
+            if (request.request.EventDate==null) 
+            {
+                throw new ArgumentException($"Se requiere una fecha de evento");
+
+            }
             var order = new Domain.Entities.Order
             {
                 OrderId = new Guid(),
@@ -35,7 +48,7 @@ namespace Application.Features.Order.Commands
 
             return new CreatedOrderResponse
             {
-                Id = order.OrderId,
+                OrderId = order.OrderId,
                 Event = order.EventName,
                 EventDate = order.EventDate,
                 Venue = order.VenueName,

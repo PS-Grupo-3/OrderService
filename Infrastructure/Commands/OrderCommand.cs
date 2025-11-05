@@ -38,9 +38,9 @@ namespace Infrastructure.Commands
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeleteAsync(Order entity, CancellationToken cancellationToken = default)
+        public async Task DeleteRangeAsync(IEnumerable<Order> Entities, CancellationToken cancellationToken = default)
         { 
-            _context.Orders.Remove(entity);
+            _context.Orders.RemoveRange(Entities);
             await _context.SaveChangesAsync(cancellationToken);
         }
     }

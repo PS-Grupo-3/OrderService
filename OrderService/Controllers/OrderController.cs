@@ -22,7 +22,7 @@ namespace OrderService.Controllers
         public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
         {
             var result = await _mediator.Send(new CreateOrderCommand(request));
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            return CreatedAtAction(nameof(GetById), new { id = result.OrderId}, result);
         }
 
         [HttpGet]
@@ -46,12 +46,7 @@ namespace OrderService.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> Delete(Guid Id) 
-        {
-            var result = await _mediator.Send(new DeleteOrderCommand(Id));
-            return Ok(result);
-        }
+       
 
 
     }

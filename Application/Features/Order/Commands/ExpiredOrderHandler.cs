@@ -23,10 +23,9 @@ namespace Application.Features.Order.Commands
                 return Unit.Value;
                 
             }
-            foreach (var order in expiredOrders) 
-            {
-                await _command.DeleteAsync(order);
-            }
+            
+            await _command.DeleteRangeAsync(expiredOrders,cancellationToken);
+            
             return Unit.Value;
         }
     }
