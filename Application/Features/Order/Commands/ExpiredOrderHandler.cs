@@ -18,15 +18,17 @@ namespace Application.Features.Order.Commands
         public async Task<Unit> Handle(ExpiredOrderCommand request, CancellationToken cancellationToken)
         {
             var expiredOrders = await _query.GetExpiredOrders(cancellationToken);
-            if (expiredOrders == null) 
+            if (expiredOrders == null)
             {
                 return Unit.Value;
-                
+
             }
-            
-            await _command.DeleteRangeAsync(expiredOrders,cancellationToken);
-            
+            Console.WriteLine($"Se encontraron {expiredOrders.Count()} órdenes expiradas.");
+
+            await _command.DeleteRangeAsync(expiredOrders, cancellationToken);
+
             return Unit.Value;
         }
     }
 }
+

@@ -3,32 +3,30 @@ using MediatR;
 
 namespace OrderService.BackgroundServices
 {
-    public class OrderExpiration:BackgroundService 
+    public class OrderExpiration : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly TimeSpan _interval = TimeSpan.FromMinutes(5);
+        private readonly TimeSpan _interval = TimeSpan.FromMinutes(3);
 
         public OrderExpiration(IServiceProvider serviceProvider)
         {
-          
             _serviceProvider = serviceProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-
-            while(!stoppingToken.IsCancellationRequested) 
+            while (!stoppingToken.IsCancellationRequested)
             {
-                using (var scope = _serviceProvider.CreateScope()) 
+                using (var scope = _serviceProvider.CreateScope())
                 {
                     var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                    Console.WriteLine($"[{DateTime.UtcNow}] Ejecutando limpieza de órdenes expiradas...");
                     await mediator.Send(new ExpiredOrderCommand(), stoppingToken);
-
-                    await Task.Delay(_interval, stoppingToken);
-
+                    Console.WriteLine($"[{DateTime.UtcNow}] Limpieza completada.");
                 }
+
+                await Task.Delay(_interval, stoppingToken);
             }
-           
         }
     }
 }
