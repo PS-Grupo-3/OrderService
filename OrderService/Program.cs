@@ -5,6 +5,7 @@ using Infrastructure.Persistence;
 using Infrastructure.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using OrderService.BackgroundServices;
 using System.Reflection;
 
 
@@ -45,6 +46,8 @@ builder.Services.AddScoped<IPaymentTypeCommand, PaymentTypeCommand>();
 
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("Application")));
+
+builder.Services.AddHostedService<OrderExpiration>();
 //End Custom
 
 var app = builder.Build();

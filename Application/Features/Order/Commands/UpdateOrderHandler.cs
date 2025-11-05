@@ -39,7 +39,7 @@ namespace Application.Features.Order.Commands
                 throw new ConflictException($"No se puede modificar una orden ya pagada.");
             }
 
-            if (request.request.PaymentType <= 0)
+            if (request.request.PaymentType <= 0 || request.request.PaymentType >=3)
             {
                 throw new ArgumentException($"El método de pago con el ID {request.request.PaymentType} es inválido");
             }
@@ -63,6 +63,14 @@ namespace Application.Features.Order.Commands
                 if (detail.Quantity <= 0)
                 {
                     throw new ArgumentException($"La cantidad {detail.Quantity} no es válido.");
+                }
+                if (detail.Tax < 0) 
+                {
+                    throw new ArgumentException($"El agregado {detail.Tax}% de impuestos no es válido.");
+                }
+                if (detail.Discount < 0)
+                {
+                    throw new ArgumentException($"El descuento {detail.Discount}% no es válido.");
                 }
 
                 double baseAmount = detail.UnitPrice * detail.Quantity;

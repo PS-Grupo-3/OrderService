@@ -56,7 +56,7 @@ namespace Infrastructure.Queries
         public async Task<IEnumerable<Order>> GetExpiredOrders(CancellationToken cancellationToken = default)
         {
             return await _context.Orders
-                .Where(o => o.CreatedAt.AddMinutes(5) <= DateTime.UtcNow && o.PaymentStatusId == 1)
+                .Where(o => o.CreatedAt.AddMinutes(5) <= DateTime.UtcNow && o.PaymentId == 1)
                 .ToListAsync(cancellationToken);
         }
     }
