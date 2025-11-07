@@ -64,6 +64,9 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+//CORS
+app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
