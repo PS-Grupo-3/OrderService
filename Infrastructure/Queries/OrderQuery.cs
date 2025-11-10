@@ -39,7 +39,7 @@ namespace Infrastructure.Queries
                 query = query.Where(o => o.UserId == userId.Value);
             }
 
-            query = query.Where(o => o.PaymentStatusId == 2);
+            query = query.Where(o => o.PaymentStatusId == payment.Value);
 
             return await query.ToListAsync(cancellationToken);
         }
