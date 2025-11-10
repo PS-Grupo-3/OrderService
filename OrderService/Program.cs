@@ -3,16 +3,42 @@ using Application.Interfaces.Query;
 using Infrastructure.Commands;
 using Infrastructure.Persistence;
 using Infrastructure.Queries;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OrderService.BackgroundServices;
+using OrderService.Middlewares;
 using System.Reflection;
+using System.Security.Claims;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    var jwt = builder.Configuration.GetSection("Jwt");
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = jwt["Issuer"],
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt["Key"])),
+        RoleClaimType = ClaimTypes.Role,
+    };
+
+});
+
+
+
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -48,6 +74,8 @@ builder.Services.AddScoped<IPaymentTypeCommand, PaymentTypeCommand>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("Application")));
 
 builder.Services.AddHostedService<OrderExpiration>();
+
+builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, AuthExceptionMiddleware>();
 //End Custom
 
 var app = builder.Build();
@@ -68,6 +96,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
