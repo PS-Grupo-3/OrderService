@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.Constants;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,9 +19,11 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.HasData
             (
-                new PaymentType { PaymentId = 1, PaymentName = "Efectivo" },
-                new PaymentType { PaymentId = 2, PaymentName = "Mercado Pago" },
-                new PaymentType { PaymentId = 3, PaymentName = "Metodo bancario" }
+                new PaymentType { PaymentId = PaymentTypeIds.Cash, PaymentName = PaymentTypeNames.Cash },
+                new PaymentType { PaymentId = PaymentTypeIds.MercadoPago, PaymentName = PaymentTypeNames.MercadoPago },
+                new PaymentType { PaymentId = PaymentTypeIds.Visa, PaymentName = PaymentTypeNames.Visa },
+                new PaymentType { PaymentId = PaymentTypeIds.MasterCard, PaymentName = PaymentTypeNames.MasterCard },
+                new PaymentType { PaymentId = PaymentTypeIds.PayPal, PaymentName = PaymentTypeNames.PayPal }
             );
         }
     }

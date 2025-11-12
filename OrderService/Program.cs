@@ -64,10 +64,9 @@ builder.Services.AddDbContext<AppDbContext>(options => {
 builder.Services.AddScoped<IOrderQuery, OrderQuery>();
 builder.Services.AddScoped<IOrderCommand, OrderCommand>();
 
-builder.Services.AddScoped<IPaymentStatusQuery, PaymentStatusQuery>();
+builder.Services.AddScoped<IOrderStatusQuery, OrderStatusQuery>();
 
 builder.Services.AddScoped<IPaymentTypeQuery, PaymentTypeQuery>();
-builder.Services.AddScoped<IPaymentTypeCommand, PaymentTypeCommand>();
 
 
 

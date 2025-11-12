@@ -8,22 +8,22 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class nombre : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "PaymentStatus",
+                name: "OrderStatus",
                 columns: table => new
                 {
-                    PaymentStatusId = table.Column<int>(type: "int", nullable: false)
+                    OrderStatusId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PaymentStatusName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    OrderStatusName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PaymentStatus", x => x.PaymentStatusId);
+                    table.PrimaryKey("PK_OrderStatus", x => x.OrderStatusId);
                 });
 
             migrationBuilder.CreateTable(
@@ -45,26 +45,26 @@ namespace Infrastructure.Migrations
                 {
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EventName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EventDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    VenueName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VenueAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    VenueId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Currency = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
                     PaymentId = table.Column<int>(type: "int", nullable: true),
-                    PaymentStatusId = table.Column<int>(type: "int", nullable: false),
+                    OrderStatusId = table.Column<int>(type: "int", nullable: false),
+                    TransactionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    TransactionId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Order", x => x.OrderId);
                     table.ForeignKey(
-                        name: "FK_Order_PaymentStatus_PaymentStatusId",
-                        column: x => x.PaymentStatusId,
-                        principalTable: "PaymentStatus",
-                        principalColumn: "PaymentStatusId",
+                        name: "FK_Order_OrderStatus_OrderStatusId",
+                        column: x => x.OrderStatusId,
+                        principalTable: "OrderStatus",
+                        principalColumn: "OrderStatusId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Order_PaymentType_PaymentId",
@@ -80,13 +80,16 @@ namespace Infrastructure.Migrations
                 {
                     DetailId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TicketId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SectorName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SectorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TicketId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Subtotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    Tax = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
+                    DiscountAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TaxAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -100,8 +103,8 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "PaymentStatus",
-                columns: new[] { "PaymentStatusId", "PaymentStatusName" },
+                table: "OrderStatus",
+                columns: new[] { "OrderStatusId", "OrderStatusName" },
                 values: new object[,]
                 {
                     { 1, "Pending" },
@@ -115,18 +118,20 @@ namespace Infrastructure.Migrations
                 {
                     { 1, "Efectivo" },
                     { 2, "Mercado Pago" },
-                    { 3, "Metodo bancario" }
+                    { 3, "Visa" },
+                    { 4, "MasterCard" },
+                    { 5, "PayPal" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_OrderStatusId",
+                table: "Order",
+                column: "OrderStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Order_PaymentId",
                 table: "Order",
                 column: "PaymentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Order_PaymentStatusId",
-                table: "Order",
-                column: "PaymentStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Order_UserId",
@@ -154,7 +159,7 @@ namespace Infrastructure.Migrations
                 name: "Order");
 
             migrationBuilder.DropTable(
-                name: "PaymentStatus");
+                name: "OrderStatus");
 
             migrationBuilder.DropTable(
                 name: "PaymentType");

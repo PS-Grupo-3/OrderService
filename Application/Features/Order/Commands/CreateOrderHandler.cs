@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces.Command;
 using Application.Models.Responses;
+using Domain.Constants;
 using Domain.Entities;
 using MediatR;
 
@@ -15,33 +16,20 @@ namespace Application.Features.Order.Commands
 
         public async Task<CreatedOrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(request.request.Event)) 
-            {
-                throw new ArgumentException($"Se requiere un nombre de evento");
-            }
-            if (string.IsNullOrEmpty(request.request.Address))
-            {
-                throw new ArgumentException($"Se requiere una dirección");
-            }
-            if (request.request.EventDate==null) 
-            {
-                throw new ArgumentException($"Se requiere una fecha de evento");
-
-            }
             var order = new Domain.Entities.Order
             {
-                OrderId = new Guid(),
+                OrderId = Guid.NewGuid(),
                 UserId = request.request.UserId,
-                EventName = request.request.Event,
-                EventDate = request.request.EventDate,
-                VenueName = request.request.Venue,
-                VenueAddress = request.request.Address,
+                EventId = request.request.Event,
+                VenueId = request.request.Venue,
                 TotalAmount = 0,
                 Currency = "ARS",
-                PaymentId = 1,
-                PaymentStatusId = 1,
+                PaymentId = null,
+                OrderStatusId = OrderStatusIds.Pending,
                 CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
                 PaymentDate = null,
+                ExpirationDate = DateTime.UtcNow.AddMinutes(5)
             };
 
             await _command.InsertAsync(order);
@@ -49,11 +37,10 @@ namespace Application.Features.Order.Commands
             return new CreatedOrderResponse
             {
                 OrderId = order.OrderId,
-                Event = order.EventName,
-                EventDate = order.EventDate,
-                Venue = order.VenueName,
-                Address = order.VenueAddress,
-                CreatedAt = order.CreatedAt
+                Event = order.EventId,
+                Venue = order.VenueId,
+                CreatedAt = order.CreatedAt,
+                ExpiresAt = order.ExpirationDate
             };
         }
     }

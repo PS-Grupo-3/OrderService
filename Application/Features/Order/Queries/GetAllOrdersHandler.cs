@@ -29,10 +29,8 @@ namespace Application.Features.Order.Queries
             {
                 OrderId = order.OrderId,
                 UserId = order.UserId,
-                Event = order.EventName,
-                EvemtDate = order.EventDate,
-                Venue = order.VenueName,
-                Address = order.VenueAddress,
+                EventId = order.EventId,
+                VenueId = order.VenueId,
                 Currency = order.Currency,
                 TotalAmount = order.TotalAmount,
                 PaymentType = new GenericResponse
@@ -40,23 +38,23 @@ namespace Application.Features.Order.Queries
                     Id = order.PaymentType.PaymentId,
                     Name = order.PaymentType.PaymentName
                 },
-                PaymentStatus = new GenericResponse
+                OrderStatus = new GenericResponse
                 {
-                    Id = order.PaymentStatus.PaymentStatusId,
-                    Name = order.PaymentStatus.PaymentStatusName
+                    Id = order.OrderStatus.OrderStatusId,
+                    Name = order.OrderStatus.OrderStatusName
                 },
                 Details = order.OrderDetails.Select(od => new OrderDetailsResponse
                 {
                     DetailId = od.DetailId,
                     TicketId = od.TicketId,
-                    Sector = od.SectorName,
                     UnitPrice = od.UnitPrice,
                     Quantity = od.Quantity,
                     SubTotal = od.Subtotal,
-                    Discount = od.Discount,
-                    Tax = od.Tax
+                    DiscountAmount = od.DiscountAmount,
+                    TaxAmount = od.TaxAmount
                 }).ToList(),
                 CreatedAt = order.CreatedAt,
+                UpdatedAt = order.UpdatedAt,
                 PaymentDate = order.PaymentDate,
                 Transaction = order.TransactionId
             }).ToList();

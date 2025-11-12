@@ -2,11 +2,10 @@
 {
     public class Details
     {
-        public Guid TicketId { get; set; }
-        public string Sector {  get; set; }
+        public Guid SectorId { get; set; }
         public int Quantity { get; set; }
-        public double UnitPrice { get; set; }
-        public double? Discount { get; set; }
-        public double? Tax { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal? Discount { get; set; }
+        public decimal? Tax { get; set; }
     }
 }

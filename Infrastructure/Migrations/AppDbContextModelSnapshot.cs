@@ -36,20 +36,19 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
 
-                    b.Property<DateTime>("EventDate")
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("EventName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("OrderStatusId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("PaymentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PaymentStatusId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalAmount")
@@ -58,22 +57,20 @@ namespace Infrastructure.Migrations
                     b.Property<string>("TransactionId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("VenueAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VenueName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("VenueId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("PaymentId");
+                    b.HasIndex("OrderStatusId");
 
-                    b.HasIndex("PaymentStatusId");
+                    b.HasIndex("PaymentId");
 
                     b.HasIndex("UserId");
 
@@ -86,7 +83,10 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("Discount")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("DiscountAmount")
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<Guid>("OrderId")
@@ -95,21 +95,26 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<string>("SectorName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("SectorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Subtotal")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<decimal?>("Tax")
+                    b.Property<decimal>("TaxAmount")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<Guid>("TicketId")
+                    b.Property<Guid?>("TicketId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18, 2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("DetailId");
 
@@ -120,32 +125,32 @@ namespace Infrastructure.Migrations
                     b.ToTable("OrderDetail", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.PaymentStatus", b =>
+            modelBuilder.Entity("Domain.Entities.OrderStatus", b =>
                 {
-                    b.Property<int>("PaymentStatusId")
+                    b.Property<int>("OrderStatusId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentStatusId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderStatusId"));
 
-                    b.Property<string>("PaymentStatusName")
+                    b.Property<string>("OrderStatusName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("PaymentStatusId");
+                    b.HasKey("OrderStatusId");
 
-                    b.ToTable("PaymentStatus", (string)null);
+                    b.ToTable("OrderStatus", (string)null);
 
                     b.HasData(
                         new
                         {
-                            PaymentStatusId = 1,
-                            PaymentStatusName = "Pending"
+                            OrderStatusId = 1,
+                            OrderStatusName = "Pending"
                         },
                         new
                         {
-                            PaymentStatusId = 2,
-                            PaymentStatusName = "Paid"
+                            OrderStatusId = 2,
+                            OrderStatusName = "Paid"
                         });
                 });
 
@@ -180,24 +185,34 @@ namespace Infrastructure.Migrations
                         new
                         {
                             PaymentId = 3,
-                            PaymentName = "Metodo bancario"
+                            PaymentName = "Visa"
+                        },
+                        new
+                        {
+                            PaymentId = 4,
+                            PaymentName = "MasterCard"
+                        },
+                        new
+                        {
+                            PaymentId = 5,
+                            PaymentName = "PayPal"
                         });
                 });
 
             modelBuilder.Entity("Domain.Entities.Order", b =>
                 {
+                    b.HasOne("Domain.Entities.OrderStatus", "OrderStatus")
+                        .WithMany("Orders")
+                        .HasForeignKey("OrderStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.PaymentType", "PaymentType")
                         .WithMany("Orders")
                         .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Entities.PaymentStatus", "PaymentStatus")
-                        .WithMany("Orders")
-                        .HasForeignKey("PaymentStatusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("PaymentStatus");
+                    b.Navigation("OrderStatus");
 
                     b.Navigation("PaymentType");
                 });
@@ -218,7 +233,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("OrderDetails");
                 });
 
-            modelBuilder.Entity("Domain.Entities.PaymentStatus", b =>
+            modelBuilder.Entity("Domain.Entities.OrderStatus", b =>
                 {
                     b.Navigation("Orders");
                 });

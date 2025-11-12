@@ -52,7 +52,13 @@ namespace OrderService.Controllers
             return Ok(result);
         }
 
-       
+        [HttpPatch("{Id}")]
+        [Authorize(Roles = "Current")]
+        public async Task<IActionResult> Confirm(Guid Id, [FromBody] PaidOrderRequest request)
+        {
+            var result = await _mediator.Send(new ConfirmOrderCommand(Id, request));
+            return Ok(result);
+        }
 
 
     }

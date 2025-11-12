@@ -1,12 +1,12 @@
 ﻿namespace Application.Models.Responses
 {
-    public class UpdatedOrderResponse
+    public class PaidOrderResponse
     {
         public Guid OrderId { get; set; }
         public Guid Event { get; set; }
         public Guid Venue { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public DateTime ExpiresAt { get; set; }
+        public DateTime PaymentDate { get; set; }
+        public string Transaction { get; set; }
         public decimal TotalAmount { get; set; }
     }
 }

@@ -15,9 +15,6 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasIndex(d => d.OrderId);
             builder.HasIndex(d => d.TicketId);
 
-            builder.Property(d => d.SectorName)
-                .IsRequired();
-
             builder.Property(d => d.UnitPrice)
                 .IsRequired()
                 .HasColumnType("decimal(18, 2)");
@@ -29,10 +26,13 @@ namespace Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasColumnType("decimal(18, 2)");
 
-            builder.Property(d => d.Discount)
+            builder.Property(d => d.DiscountAmount)
                 .HasColumnType("decimal(18, 2)");
 
-            builder.Property(d => d.Tax)
+            builder.Property(d => d.TaxAmount)
+                .HasColumnType("decimal(18, 2)");
+
+            builder.Property(d => d.Total)
                 .HasColumnType("decimal(18, 2)");
 
             builder.HasOne(d => d.Order)

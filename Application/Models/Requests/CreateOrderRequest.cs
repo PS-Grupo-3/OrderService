@@ -3,9 +3,7 @@
     public class CreateOrderRequest
     {
         public Guid UserId { get; set; }
-        public string Event { get; set; }
-        public DateTime EventDate { get; set; }
-        public string Venue { get; set; }
-        public string Address { get; set; }
+        public Guid Event { get; set; }
+        public Guid Venue { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces.Query;
+using Domain.Constants;
 using Domain.Entities;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ namespace Infrastructure.Queries
         public async Task<IEnumerable<Order>> GetAllAsync(DateTime? from, DateTime? to, int? payment, Guid? userId, CancellationToken cancellationToken = default)
         {
             var query = _context.Orders
-                .Include(o => o.PaymentStatus)
+                .Include(o => o.OrderStatus)
                 .Include(o => o.PaymentType)
                 .Include(o => o.OrderDetails)
                 .AsQueryable();
@@ -39,7 +40,7 @@ namespace Infrastructure.Queries
                 query = query.Where(o => o.UserId == userId.Value);
             }
 
-            query = query.Where(o => o.PaymentStatusId == 2);
+            query = query.Where(o => o.OrderStatus.OrderStatusName == OrderStatusNames.Paid);
 
             return await query.ToListAsync(cancellationToken);
         }
@@ -47,16 +48,17 @@ namespace Infrastructure.Queries
         public async Task<Order> GetByIdAsync(Guid orderId, CancellationToken cancellationToken = default)
         {
             return await _context.Orders
-                .Include(o => o.PaymentStatus)
+                .Include(o => o.OrderStatus)
                 .Include(o => o.PaymentType)
                 .Include(o => o.OrderDetails)
-                .FirstOrDefaultAsync(order=>order.OrderId==orderId, cancellationToken);
+                .FirstOrDefaultAsync(order => order.OrderId == orderId, cancellationToken);
         }
 
         public async Task<IEnumerable<Order>> GetExpiredOrders(CancellationToken cancellationToken = default)
         {
             return await _context.Orders
-                .Where(o => o.CreatedAt.AddMinutes(5) <= DateTime.UtcNow && o.PaymentId == 1)
+                .Where(o => o.ExpirationDate <= DateTime.UtcNow
+                            && o.OrderStatus.OrderStatusName != OrderStatusNames.Paid)
                 .ToListAsync(cancellationToken);
         }
     }
