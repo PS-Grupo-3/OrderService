@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251112022639_init")]
+    [Migration("20251112160557_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -97,9 +97,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<Guid>("SectorId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Subtotal")
                         .HasColumnType("decimal(18, 2)");

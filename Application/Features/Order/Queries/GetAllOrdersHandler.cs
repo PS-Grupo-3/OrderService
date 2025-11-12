@@ -51,7 +51,10 @@ namespace Application.Features.Order.Queries
                     Quantity = od.Quantity,
                     SubTotal = od.Subtotal,
                     DiscountAmount = od.DiscountAmount,
-                    TaxAmount = od.TaxAmount
+                    TaxAmount = od.TaxAmount,
+                    CreatedAt = od.CreatedAt,
+                    UpdatedAt = od.UpdatedAt,
+                    Total = od.Total
                 }).ToList(),
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,

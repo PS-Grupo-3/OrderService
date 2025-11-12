@@ -51,6 +51,11 @@ namespace Application.Features.Order.Commands
                 throw new KeyNotFoundException($"No se encontró método de pago con el ID {request.request.PaymentType}.");
             }
 
+            if (order.OrderDetails.Count() < 1)
+            {
+                throw new ArgumentException($"La orden con el ID {request.Id} debe tener al menos un detalle.");
+            }
+
             foreach (var detail in order.OrderDetails)
             {
                 detail.TicketId = Guid.NewGuid();

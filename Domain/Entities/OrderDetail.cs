@@ -5,7 +5,6 @@
         public Guid DetailId { get; set; } = Guid.NewGuid();
         public Guid OrderId { get; set; }
 
-        public Guid SectorId { get; set; }
         public Guid? TicketId { get; set; }
 
         public int Quantity { get; set; }

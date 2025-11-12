@@ -95,9 +95,6 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("SectorId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal>("Subtotal")
                         .HasColumnType("decimal(18, 2)");
 

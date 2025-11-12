@@ -1,5 +1,7 @@
-﻿using Application.Interfaces.Query;
+﻿using Application.Exceptions;
+using Application.Interfaces.Query;
 using Application.Models.Responses;
+using Domain.Constants;
 using MediatR;
 
 namespace Application.Features.Order.Queries
@@ -19,6 +21,11 @@ namespace Application.Features.Order.Queries
             if (order == null) 
             {
                 throw new KeyNotFoundException($"No se encontraron ordenes con el ID {request.orderId}");
+            }
+
+            if (order.OrderStatus.OrderStatusName != OrderStatusNames.Paid)
+            {
+                throw new ConflictException($"Solo se puede mostrar ordenes pagadas.");
             }
 
             return new CompleteOrderResponse
@@ -47,7 +54,10 @@ namespace Application.Features.Order.Queries
                     Quantity = od.Quantity,
                     SubTotal = od.Subtotal,
                     DiscountAmount = od.DiscountAmount,
-                    TaxAmount = od.TaxAmount
+                    TaxAmount = od.TaxAmount,
+                    CreatedAt = od.CreatedAt,
+                    UpdatedAt = od.UpdatedAt,
+                    Total = od.Total
                 }).ToList(),
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
