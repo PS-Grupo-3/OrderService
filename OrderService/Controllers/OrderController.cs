@@ -21,7 +21,7 @@ namespace OrderService.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles="Current")]
+        [Authorize(Roles = "Current")]
         public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
         {
             var result = await _mediator.Send(new CreateOrderCommand(request));
@@ -29,7 +29,7 @@ namespace OrderService.Controllers
         }
 
         [HttpGet]
-        [Authorize (Roles ="Admin,SuperAdmin")]
+        [Authorize(Roles = "Current")]
         public async Task<IActionResult> GetAll(DateTime? from, DateTime? to, int? paymentType, Guid? userId)
         {
             var result = await _mediator.Send(new GetAllOrdersQuery(from, to, paymentType, userId));
@@ -37,7 +37,7 @@ namespace OrderService.Controllers
         }
 
         [HttpGet("{Id}")]
-        [Authorize(Roles = "Admin,SuperAdmin")]
+        [Authorize(Roles = "Current")]
         public async Task<IActionResult> GetById(Guid Id)
         {
             var result = await _mediator.Send(new GetOrderByIdQuery(Id));
