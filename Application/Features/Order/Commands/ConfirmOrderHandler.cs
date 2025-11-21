@@ -1,5 +1,9 @@
 ﻿using Application.Exceptions;
+using Application.Interfaces.Adapter;
 using Application.Interfaces.Command;
+using Application.Interfaces.ITicket;
+using Application.Interfaces.ITicketSeat;
+using Application.Interfaces.ITicketSector;
 using Application.Interfaces.Query;
 using Application.Models.Responses;
 using Domain.Constants;
@@ -12,12 +16,21 @@ namespace Application.Features.Order.Commands
         private readonly IOrderCommand _command;
         private readonly IOrderQuery _query;
         private readonly IPaymentTypeQuery _queryPayment;
+        private readonly ITicketCommand _ticketCommand;
+        private readonly ITicketSeatCommand _ticketSeatCommand;
+        private readonly ITicketSectorCommand _ticketSectorCommand;
+        private readonly IEventServiceClient _eventServiceClient;
 
-        public ConfirmOrderHandler(IOrderCommand command, IOrderQuery query, IPaymentTypeQuery queryPayment)
+        public ConfirmOrderHandler(IOrderCommand command, IOrderQuery query, IPaymentTypeQuery queryPayment, ITicketCommand ticketCommand,
+            ITicketSeatCommand ticketSeatCommand, ITicketSectorCommand ticketSectorCommand, IEventServiceClient eventServiceClient)
         {
             _command = command;
             _query = query;
             _queryPayment = queryPayment;
+            _ticketCommand = ticketCommand;
+            _ticketSeatCommand = ticketSeatCommand;
+            _ticketSectorCommand = ticketSectorCommand;
+            _eventServiceClient = eventServiceClient;
         }
 
         public async Task<PaidOrderResponse> Handle(ConfirmOrderCommand request, CancellationToken cancellationToken)
@@ -56,12 +69,62 @@ namespace Application.Features.Order.Commands
                 throw new ArgumentException($"La orden con el ID {request.Id} debe tener al menos un detalle.");
             }
 
+            // Crear el ticket
+            var ticketId = Guid.NewGuid();
+
+            var ticket = new Domain.Entities.Ticket
+            {
+                TicketId = ticketId,
+                OrderId = order.OrderId,
+                EventId = order.EventId,
+                UserId = order.UserId,
+                StatusId = 1, // inicia como activo
+                Created = DateTime.UtcNow,
+                Updated = DateTime.UtcNow,
+            };
+
+            await _ticketCommand.InsertTicketAsync(ticket);
+
+            // se procesa cada detalle de la orden para crear ticketSeat o ticketSector
+            var seatsToLock = new List<Guid>();
+
             foreach (var detail in order.OrderDetails)
             {
-                detail.TicketId = Guid.NewGuid();
-                detail.UpdatedAt = DateTime.UtcNow;
+                if (detail.IsSeat) // si es un asiento
+                {
+                    var seat = new Domain.Entities.TicketSeat
+                    {
+                        TicketSeatId = Guid.NewGuid(),
+                        TicketId = ticketId,
+                        EventId = order.EventId,
+                        EventSectorId = detail.EventSectorId,
+                        EventSeatId = detail.EventSeatId.Value,
+                        Price = detail.UnitPrice
+                    };
+                    await _ticketSeatCommand.InsertTicketSeatAsync(seat);
+                    seatsToLock.Add(detail.EventSeatId.Value);
+                }
+                else // si es un sector no controlado
+                {
+                    var sector = new Domain.Entities.TicketSector
+                    {
+                        TicketSectorId = Guid.NewGuid(),
+                        TicketId = ticketId,
+                        EventId = order.EventId,
+                        EventSectorId = detail.EventSectorId,
+                        Quantity = detail.Quantity,
+                        UnitPrice = detail.UnitPrice
+                    };
+                    await _ticketSectorCommand.InsertTicketSectorAsync(sector);
+                }
+            }
+            // notificar a EventService
+            if (seatsToLock.Any())
+            {
+                await _eventServiceClient.MarkSeatsAsUnavailableAsync(order.EventId, seatsToLock, cancellationToken);
             }
 
+            // actualzia la orden
             order.OrderStatusId = OrderStatusIds.Paid;
             order.PaymentId = request.request.PaymentType;
             order.PaymentDate = DateTime.UtcNow;

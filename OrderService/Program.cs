@@ -1,5 +1,11 @@
+using Application.Interfaces.Adapter;
 using Application.Interfaces.Command;
+using Application.Interfaces.ITicket;
+using Application.Interfaces.ITicketSeat;
+using Application.Interfaces.ITicketSector;
+using Application.Interfaces.ITicketStatus;
 using Application.Interfaces.Query;
+using Infrastructure.Adapter;
 using Infrastructure.Commands;
 using Infrastructure.Persistence;
 using Infrastructure.Queries;
@@ -17,6 +23,7 @@ using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -73,6 +80,21 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Loa
 builder.Services.AddHostedService<OrderExpiration>();
 
 builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, AuthExceptionMiddleware>();
+
+builder.Services.AddScoped<ITicketCommand, TicketCommand>();
+builder.Services.AddScoped<ITicketSeatCommand, TicketSeatCommand>();
+builder.Services.AddScoped<ITicketSectorCommand, TicketSectorCommand>();
+builder.Services.AddScoped<ITicketQuery, TicketQuery>();
+builder.Services.AddScoped<ITicketSeatQuery, TicketSeatQuery>();
+builder.Services.AddScoped<ITicketSectorQuery, TicketSectorQuery>();
+builder.Services.AddScoped<ITicketStatusQuery, TicketStatusQuery>();
+
+
+builder.Services.AddHttpClient<IEventServiceClient, EventServiceClient>(client =>
+{
+    client.BaseAddress = new Uri(configuration["Services:EventServiceBaseUrl"] ?? throw new ArgumentNullException("La Url de EventService no esta configurada"));
+});
+
 //End Custom
 
 var app = builder.Build();

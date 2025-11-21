@@ -4,17 +4,13 @@
     {
         public Guid OrderId { get; set; }
         public Guid UserId { get; set; }
-
         public Guid EventId { get; set; }
         public Guid VenueId { get; set; }
-
         public decimal TotalAmount { get; set; }
         public string Currency {  get; set; }
-
         public int? PaymentId { get; set; }
         public int OrderStatusId { get; set; }
         public string? TransactionId { get; set; }
-
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? PaymentDate { get; set; }

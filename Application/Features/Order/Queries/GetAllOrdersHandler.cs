@@ -46,7 +46,6 @@ namespace Application.Features.Order.Queries
                 Details = order.OrderDetails.Select(od => new OrderDetailsResponse
                 {
                     DetailId = od.DetailId,
-                    TicketId = od.TicketId,
                     UnitPrice = od.UnitPrice,
                     Quantity = od.Quantity,
                     SubTotal = od.Subtotal,
