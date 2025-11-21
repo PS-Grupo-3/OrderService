@@ -1,6 +1,12 @@
-﻿namespace Domain.Entities
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Application.Models.Responses
 {
-    public class Ticket
+    public class TicketResponse
     {
         public Guid TicketId { get; set; }
         public Guid OrderId { get; set; }
@@ -10,9 +16,7 @@
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
 
-        // Relationships
-        public TicketStatus StatusRef { get; set; }
-        public ICollection<TicketSeat> TicketSeats { get; set; }
-        public ICollection<TicketSector> TicketSectors { get; set; }
+        public List<TicketSeatResponse> Seats { get; set; }
+        public List<TicketSectorResponse> Sectors { get; set; }
     }
 }

@@ -13,14 +13,25 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasKey(d => d.DetailId);
 
             builder.HasIndex(d => d.OrderId);
-            builder.HasIndex(d => d.TicketId);
+
+            builder.Property(d => d.IsSeat)
+                .IsRequired();
+
+            builder.Property(d => d.EventId)
+                .IsRequired();
+
+            builder.Property(d => d.EventSectorId)
+                .IsRequired();
+
+            builder.Property(d => d.EventSeatId)
+                .IsRequired(false);
+
+            builder.Property(d => d.Quantity)
+               .IsRequired();
 
             builder.Property(d => d.UnitPrice)
                 .IsRequired()
-                .HasColumnType("decimal(18, 2)");
-
-            builder.Property(d => d.Quantity)
-                .IsRequired();
+                .HasColumnType("decimal(18, 2)");           
 
             builder.Property(d => d.Subtotal)
                 .IsRequired()

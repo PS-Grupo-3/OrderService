@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class NuevaMigracion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -37,6 +37,19 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PaymentType", x => x.PaymentId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TicketStatus",
+                columns: table => new
+                {
+                    StatusID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "varchar(25)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicketStatus", x => x.StatusID);
                 });
 
             migrationBuilder.CreateTable(
@@ -75,12 +88,38 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Ticket",
+                columns: table => new
+                {
+                    TicketId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StatusId = table.Column<int>(type: "int", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Updated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ticket", x => x.TicketId);
+                    table.ForeignKey(
+                        name: "FK_Ticket_TicketStatus_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "TicketStatus",
+                        principalColumn: "StatusID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrderDetail",
                 columns: table => new
                 {
                     DetailId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TicketId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsSeat = table.Column<bool>(type: "bit", nullable: false),
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventSeatId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    EventSectorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Subtotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -98,6 +137,50 @@ namespace Infrastructure.Migrations
                         column: x => x.OrderId,
                         principalTable: "Order",
                         principalColumn: "OrderId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TicketSeat",
+                columns: table => new
+                {
+                    TicketSeatId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TicketId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventSectorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventSeatId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicketSeat", x => x.TicketSeatId);
+                    table.ForeignKey(
+                        name: "FK_TicketSeat_Ticket_TicketId",
+                        column: x => x.TicketId,
+                        principalTable: "Ticket",
+                        principalColumn: "TicketId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TicketSector",
+                columns: table => new
+                {
+                    TicketSectorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TicketId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventSectorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicketSector", x => x.TicketSectorId);
+                    table.ForeignKey(
+                        name: "FK_TicketSector_Ticket_TicketId",
+                        column: x => x.TicketId,
+                        principalTable: "Ticket",
+                        principalColumn: "TicketId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -122,6 +205,15 @@ namespace Infrastructure.Migrations
                     { 5, "PayPal" }
                 });
 
+            migrationBuilder.InsertData(
+                table: "TicketStatus",
+                columns: new[] { "StatusID", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Available" },
+                    { 4, "Expired" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Order_OrderStatusId",
                 table: "Order",
@@ -143,8 +235,18 @@ namespace Infrastructure.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderDetail_TicketId",
-                table: "OrderDetail",
+                name: "IX_Ticket_StatusId",
+                table: "Ticket",
+                column: "StatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketSeat_TicketId",
+                table: "TicketSeat",
+                column: "TicketId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketSector_TicketId",
+                table: "TicketSector",
                 column: "TicketId");
         }
 
@@ -155,13 +257,25 @@ namespace Infrastructure.Migrations
                 name: "OrderDetail");
 
             migrationBuilder.DropTable(
+                name: "TicketSeat");
+
+            migrationBuilder.DropTable(
+                name: "TicketSector");
+
+            migrationBuilder.DropTable(
                 name: "Order");
+
+            migrationBuilder.DropTable(
+                name: "Ticket");
 
             migrationBuilder.DropTable(
                 name: "OrderStatus");
 
             migrationBuilder.DropTable(
                 name: "PaymentType");
+
+            migrationBuilder.DropTable(
+                name: "TicketStatus");
         }
     }
 }
