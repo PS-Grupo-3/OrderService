@@ -23,11 +23,6 @@ namespace Application.Features.Order.Queries
                 throw new KeyNotFoundException($"No se encontraron ordenes con el ID {request.orderId}");
             }
 
-            if (order.OrderStatus.OrderStatusName != OrderStatusNames.Paid)
-            {
-                throw new ConflictException($"Solo se puede mostrar ordenes pagadas.");
-            }
-
             return new CompleteOrderResponse
             {
                 OrderId = order.OrderId,
@@ -36,16 +31,21 @@ namespace Application.Features.Order.Queries
                 VenueId = order.VenueId,
                 Currency = order.Currency,
                 TotalAmount = order.TotalAmount,
-                PaymentType = new GenericResponse
-                {
-                    Id = order.PaymentType.PaymentId,
-                    Name = order.PaymentType.PaymentName
-                },
+
+                PaymentType = order.PaymentType == null
+                    ? null
+                    : new GenericResponse
+                    {
+                        Id = order.PaymentType.PaymentId,
+                        Name = order.PaymentType.PaymentName
+                    },
+
                 OrderStatus = new GenericResponse
                 {
                     Id = order.OrderStatus.OrderStatusId,
                     Name = order.OrderStatus.OrderStatusName
                 },
+
                 Details = order.OrderDetails.Select(od => new OrderDetailsResponse
                 {
                     DetailId = od.DetailId,
@@ -58,11 +58,13 @@ namespace Application.Features.Order.Queries
                     UpdatedAt = od.UpdatedAt,
                     Total = od.Total
                 }).ToList(),
+
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
                 PaymentDate = order.PaymentDate,
                 Transaction = order.TransactionId
             };
+
             
         }
     }

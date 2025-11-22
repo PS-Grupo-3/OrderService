@@ -6,7 +6,7 @@ namespace OrderService.BackgroundServices
     public class OrderExpiration : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly TimeSpan _interval = TimeSpan.FromMinutes(3);
+        private readonly TimeSpan _interval = TimeSpan.FromMinutes(1);
 
         public OrderExpiration(IServiceProvider serviceProvider)
         {

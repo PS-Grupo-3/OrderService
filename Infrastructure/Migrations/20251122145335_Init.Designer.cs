@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251118190027_init")]
-    partial class init
+    [Migration("20251122145335_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,6 +92,18 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("DiscountAmount")
                         .HasColumnType("decimal(18, 2)");
 
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("EventSeatId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EventSectorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsSeat")
+                        .HasColumnType("bit");
+
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
@@ -103,9 +115,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<decimal>("TaxAmount")
                         .HasColumnType("decimal(18, 2)");
-
-                    b.Property<Guid?>("TicketId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Total")
                         .HasColumnType("decimal(18, 2)");
@@ -119,8 +128,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("DetailId");
 
                     b.HasIndex("OrderId");
-
-                    b.HasIndex("TicketId");
 
                     b.ToTable("OrderDetail", (string)null);
                 });
@@ -199,6 +206,122 @@ namespace Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Domain.Entities.Ticket", b =>
+                {
+                    b.Property<Guid>("TicketId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("TicketId");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("Ticket", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.TicketSeat", b =>
+                {
+                    b.Property<Guid>("TicketSeatId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EventSeatId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EventSectorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<Guid>("TicketId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("TicketSeatId");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("TicketSeat", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.TicketSector", b =>
+                {
+                    b.Property<Guid>("TicketSectorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EventSectorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TicketId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.HasKey("TicketSectorId");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("TicketSector", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.TicketStatus", b =>
+                {
+                    b.Property<int>("StatusID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StatusID"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(25)");
+
+                    b.HasKey("StatusID");
+
+                    b.ToTable("TicketStatus", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            StatusID = 1,
+                            Name = "Available"
+                        },
+                        new
+                        {
+                            StatusID = 4,
+                            Name = "Expired"
+                        });
+                });
+
             modelBuilder.Entity("Domain.Entities.Order", b =>
                 {
                     b.HasOne("Domain.Entities.OrderStatus", "OrderStatus")
@@ -228,6 +351,39 @@ namespace Infrastructure.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Ticket", b =>
+                {
+                    b.HasOne("Domain.Entities.TicketStatus", "StatusRef")
+                        .WithMany("Tickets")
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("StatusRef");
+                });
+
+            modelBuilder.Entity("Domain.Entities.TicketSeat", b =>
+                {
+                    b.HasOne("Domain.Entities.Ticket", "TicketRef")
+                        .WithMany("TicketSeats")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TicketRef");
+                });
+
+            modelBuilder.Entity("Domain.Entities.TicketSector", b =>
+                {
+                    b.HasOne("Domain.Entities.Ticket", "TicketRef")
+                        .WithMany("TicketSectors")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TicketRef");
+                });
+
             modelBuilder.Entity("Domain.Entities.Order", b =>
                 {
                     b.Navigation("OrderDetails");
@@ -241,6 +397,18 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.PaymentType", b =>
                 {
                     b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Ticket", b =>
+                {
+                    b.Navigation("TicketSeats");
+
+                    b.Navigation("TicketSectors");
+                });
+
+            modelBuilder.Entity("Domain.Entities.TicketStatus", b =>
+                {
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }

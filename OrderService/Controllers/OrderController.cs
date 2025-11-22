@@ -21,7 +21,7 @@ namespace OrderService.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Current")]
+        [Authorize(Roles = "Current,Admin,SuperAdmin")]
         public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
         {
             var result = await _mediator.Send(new CreateOrderCommand(request));
@@ -29,7 +29,7 @@ namespace OrderService.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Current")]
+        [Authorize(Roles = "Current,Admin,SuperAdmin")]
         public async Task<IActionResult> GetAll(DateTime? from, DateTime? to, int? paymentType, Guid? userId)
         {
             var result = await _mediator.Send(new GetAllOrdersQuery(from, to, paymentType, userId));
@@ -37,7 +37,7 @@ namespace OrderService.Controllers
         }
 
         [HttpGet("{Id}")]
-        [Authorize(Roles = "Current")]
+        [Authorize(Roles = "Current,Admin,SuperAdmin")]
         public async Task<IActionResult> GetById(Guid Id)
         {
             var result = await _mediator.Send(new GetOrderByIdQuery(Id));
@@ -45,7 +45,7 @@ namespace OrderService.Controllers
         }
 
         [HttpPut("{Id}")]
-        [Authorize(Roles = "Current")]
+        [Authorize(Roles = "Current,Admin,SuperAdmin")]
         public async Task<IActionResult> Update(Guid Id, [FromBody] UpdateOrderRequest request)
         {
             var result = await _mediator.Send(new UpdateOrderCommand(Id, request));
@@ -53,7 +53,7 @@ namespace OrderService.Controllers
         }
 
         [HttpPatch("{Id}")]
-        [Authorize(Roles = "Current")]
+        [Authorize(Roles = "Current,Admin,SuperAdmin")]
         public async Task<IActionResult> Confirm(Guid Id, [FromBody] PaidOrderRequest request)
         {
             var result = await _mediator.Send(new ConfirmOrderCommand(Id, request));
