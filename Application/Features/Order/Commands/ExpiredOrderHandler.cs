@@ -11,46 +11,69 @@ namespace Application.Features.Order.Commands
         private readonly IOrderQuery _query;
         private readonly IEventServiceClient _eventServiceClient;
 
-        public ExpiredOrderHandler(IOrderCommand command, IOrderQuery query, IEventServiceClient eventServiceClient)
+        public ExpiredOrderHandler(
+            IOrderCommand command,
+            IOrderQuery query,
+            IEventServiceClient eventServiceClient)
         {
             _command = command;
             _query = query;
             _eventServiceClient = eventServiceClient;
         }
-        
+
         public async Task<Unit> Handle(ExpiredOrderCommand request, CancellationToken cancellationToken)
         {
+            Console.WriteLine("[ExpiredOrderHandler] Buscando órdenes expiradas...");
             var expiredOrders = await _query.GetExpiredOrders(cancellationToken);
+            Console.WriteLine($"[ExpiredOrderHandler] Encontradas: {expiredOrders.Count()}");
 
             foreach (var order in expiredOrders)
             {
-                var seats = order.OrderDetails
-                    .Where(d => d.IsSeat && d.EventSeatId.HasValue)
-                    .Select(d => d.EventSeatId!.Value)
-                    .ToList();
+                Console.WriteLine($"[ExpiredOrderHandler] Procesando orden {order.OrderId}");
 
-                if (seats.Any())
+                try
                 {
-                    await _eventServiceClient.MarkSeatsAsAvailableAsync(order.EventId, seats, cancellationToken);
+                    var seats = order.OrderDetails
+                        .Where(d => d.IsSeat && d.EventSeatId.HasValue)
+                        .Select(d => d.EventSeatId!.Value)
+                        .ToList();
+
+                    if (seats.Any())
+                    {
+                        Console.WriteLine($"Restaurando {seats.Count} seats");
+                        await _eventServiceClient.MarkSeatsAsAvailableAsync(order.EventId, seats, cancellationToken);
+                    }
+
+                    var sectors = order.OrderDetails
+                        .Where(d => !d.IsSeat)
+                        .Select(d => d.EventSectorId)
+                        .Distinct()
+                        .ToList();
+
+                    foreach (var sectorId in sectors)
+                    {
+                        Console.WriteLine("Restaurando sector " + sectorId);
+                        await _eventServiceClient.MarkSectorAsAvailableAsync(sectorId, cancellationToken);
+                    }
                 }
-                
-                // Como es logica de negocio, lo pongo acá y no en una query de Infrastructure (aviso para vos especialmente ALVARO)
-                var sectors = order.OrderDetails
-                    .Where(d => !d.IsSeat)
-                    .Select(d => d.EventSectorId)
-                    .Distinct()
-                    .ToList();
-
-                foreach (var sectorId in sectors)
+                catch (Exception ex)
                 {
-                    await _eventServiceClient.MarkSectorAsAvailableAsync(sectorId, cancellationToken);
+                    Console.WriteLine("Error restaurando seats/sectors para orden " + order.OrderId + ": " + ex.Message);
                 }
             }
 
-            await _command.DeleteRangeAsync(expiredOrders, cancellationToken);
+            try
+            {
+                Console.WriteLine("Eliminando órdenes...");
+                await _command.DeleteRangeAsync(expiredOrders, cancellationToken);
+                Console.WriteLine("Eliminadas correctamente.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error eliminando órdenes expiradas: " + ex.Message);
+            }
 
             return Unit.Value;
         }
     }
 }
-
