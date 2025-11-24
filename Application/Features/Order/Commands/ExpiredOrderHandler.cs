@@ -29,44 +29,60 @@ namespace Application.Features.Order.Commands
 
             foreach (var order in expiredOrders)
             {
-                Console.WriteLine($"[ExpiredOrderHandler] Procesando orden {order.OrderId}");
+                Console.WriteLine($"Procesando orden {order.OrderId}");
 
                 try
                 {
-                    var seats = order.OrderDetails
+                    var controlledSeatIds = order.OrderDetails
                         .Where(d => d.IsSeat && d.EventSeatId.HasValue)
                         .Select(d => d.EventSeatId!.Value)
                         .ToList();
 
-                    if (seats.Any())
+                    if (controlledSeatIds.Any())
                     {
-                        Console.WriteLine($"Restaurando {seats.Count} seats");
-                        await _eventServiceClient.MarkSeatsAsAvailableAsync(order.EventId, seats, cancellationToken);
+                        Console.WriteLine($"Liberando {controlledSeatIds.Count} seats controlados...");
+                        await _eventServiceClient.MarkSeatsAsAvailableAsync(
+                            order.EventId, controlledSeatIds, cancellationToken);
                     }
-
-                    var sectors = order.OrderDetails
+                    
+                    var sectorDetails = order.OrderDetails
                         .Where(d => !d.IsSeat)
-                        .Select(d => d.EventSectorId)
-                        .Distinct()
                         .ToList();
 
-                    foreach (var sectorId in sectors)
+                    foreach (var detail in sectorDetails)
                     {
-                        Console.WriteLine("Restaurando sector " + sectorId);
-                        await _eventServiceClient.MarkSectorAsAvailableAsync(sectorId, cancellationToken);
+                        var sectorId = detail.EventSectorId;
+
+                        var sectorInfo = await _eventServiceClient.GetSectorAsync(
+                            order.EventId, sectorId, cancellationToken);
+
+                        if (sectorInfo.IsControlled)
+                        {
+                            Console.WriteLine($"Sector controlado {sectorId}: liberando SECTOR entero");
+                            await _eventServiceClient.MarkSectorAsAvailableAsync(sectorId, cancellationToken);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Sector NO controlado {sectorId}: liberando {detail.Quantity} unidades...");
+
+                            for (int i = 0; i < detail.Quantity; i++)
+                            {
+                                await _eventServiceClient.ReleaseFreeSectorAsync(sectorId, cancellationToken);
+                            }
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error restaurando seats/sectors para orden " + order.OrderId + ": " + ex.Message);
+                    Console.WriteLine($"Error liberando recursos de la orden {order.OrderId}: {ex.Message}");
                 }
             }
-
+            
             try
             {
-                Console.WriteLine("Eliminando órdenes...");
+                Console.WriteLine("Eliminando órdenes expiradas...");
                 await _command.DeleteRangeAsync(expiredOrders, cancellationToken);
-                Console.WriteLine("Eliminadas correctamente.");
+                Console.WriteLine("Órdenes eliminadas correctamente.");
             }
             catch (Exception ex)
             {

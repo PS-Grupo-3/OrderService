@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces.Adapter;
 using Application.Models.External.Request;
 using System.Net.Http.Json;
+using Application.Models.Responses;
 
 namespace Infrastructure.Adapter
 {
@@ -44,5 +45,29 @@ namespace Infrastructure.Adapter
             var response = await _httpClient.PatchAsJsonAsync($"api/v1/EventSector/{eventSectorId}/availability", false, ct);
             response.EnsureSuccessStatusCode();
         }
+        
+        public async Task ReleaseFreeSectorAsync(Guid sectorId, CancellationToken ct = default)
+        {
+            var response = await _httpClient.PatchAsync(
+                $"api/v1/Event/{sectorId}/release",
+                null,
+                ct
+            );
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        
+        public async Task<EventSectorDto> GetSectorAsync(Guid eventId, Guid sectorId, CancellationToken ct = default)
+        {
+            var response = await _httpClient.GetAsync($"api/v1/Event/{eventId}/sectors/{sectorId}", ct);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<EventSectorDto>(ct);
+        }
+
+
     }
+
+
+
 }
